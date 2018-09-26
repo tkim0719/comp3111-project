@@ -1,4 +1,8 @@
+# Group 6 - sudo kroean
+
+
 # COMP3111: Software Engineering Project - Webscrapper
+##(Copy from Project Git)
 ## Project Problem Statement and Activities
 
 
