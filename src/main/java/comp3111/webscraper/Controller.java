@@ -104,6 +104,8 @@ public class Controller {
     	textAreaConsole.setText(output);
     }
     
+    
+    
     /**
      * Called when the new button is pressed. Very dummy action - print something in the command prompt.
      */
