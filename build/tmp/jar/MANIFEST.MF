@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Implementation-Title: webscraper_sudo_korean
+Implementation-Version: 0.1.0
+Main-Class: comp3111.webscraper.WebScraperApplication
+

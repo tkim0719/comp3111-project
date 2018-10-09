@@ -6,7 +6,7 @@ apply plugin: 'jacoco'
 apply plugin: 'application'
 
 jar {
-    baseName = 'webscraper'
+    baseName = 'webscraper_sudo_korean'
     version =  '0.1.0'
     destinationDir = file("${buildDir}/jar")
     manifest {
