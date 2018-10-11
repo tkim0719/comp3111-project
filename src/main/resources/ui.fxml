@@ -20,6 +20,7 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableCell?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -61,8 +62,8 @@
                      <children>
                         <TextField fx:id="textFieldKeyword" layoutX="14.0" layoutY="36.0" prefHeight="25.0" prefWidth="131.0" promptText="Keyword" />
                         <!--  this is the Go button. When it is clicked, it calls Controller.actionSearch() -->
-                        <Button layoutX="145.0" layoutY="36.0" mnemonicParsing="false" onAction="#actionSearch" prefHeight="25.0" prefWidth="35.0" text="Go" />
-
+                        <Button layoutX="145.0" layoutY="36.0" mnemonicParsing="false" onAction="#actionSearch" prefHeight="25.0" prefWidth="40.0" text="Go" />
+                        <Button layoutX="128.0" layoutY="67.0" mnemonicParsing="false" onAction="#actionSearch" prefHeight="25.0" prefWidth="57.0" text="Refine" />
                      </children>
                   </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -87,7 +88,7 @@
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
                                           <Label layoutX="51.0" layoutY="48.0" text="Number of Data Fetched:" />
-                                          <Label fx:id="labelCount" layoutX="198.0" layoutY="48.0" prefHeight="17.0" prefWidth="78.0" text="&lt;total&gt;" />
+                                          <Label fx:id="labelCount" layoutX="210.0" layoutY="48.0" prefHeight="17.0" prefWidth="78.0" text="&lt;total&gt;" />
                                           <Label layoutX="51.0" layoutY="88.0" prefHeight="17.0" prefWidth="131.0" text="Average Selling Price:" />
                                           <Label fx:id="labelPrice" layoutX="198.0" layoutY="88.0" text="&lt;AvgPrice&gt;" />
                                           <Label layoutX="51.0" layoutY="128.0" text="Lowest Selling Price:" />
@@ -102,12 +103,12 @@
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <TableView AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <TableView fx:id="tableView" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <columns>
-                                              <TableColumn editable="false" prefWidth="154.0" text="Title" />
-                                              <TableColumn editable="false" prefWidth="90.0" text="Price" />
-                                                <TableColumn editable="false" prefWidth="78.0" text="URL" />
-                                                <TableColumn editable="false" prefWidth="88.0" text="Posted Date" />
+                                              <TableColumn fx:id="tTitle" editable="false" prefWidth="154.0" text="Title" />
+                                              <TableColumn fx:id="tPrice" editable="false" prefWidth="90.0" text="Price" />
+                                              <TableColumn fx:id="tURL" editable="false" prefWidth="78.0" text="URL" />
+                                              <TableColumn fx:id="tDate" editable="false" prefWidth="88.0" text="Posted Date" />
                                             </columns>
                                           </TableView>
                                        </children>
