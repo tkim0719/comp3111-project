@@ -90,6 +90,7 @@ public class Controller {
 //    		tURL.setCellValueFactory(new PropertyValueFactory<Item, String>(item.getUrl()));
     	}
     	textAreaConsole.setText(output);
+    	labelCount.setText("    Hi");
     	tableView.getItems().setAll(result);
     }
     
