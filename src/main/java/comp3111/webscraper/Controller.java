@@ -27,7 +27,7 @@ public class Controller {
 
     @FXML 
     private Label labelCount; 
-
+    
     @FXML 
     private Label labelPrice; 
 
@@ -90,19 +90,21 @@ public class Controller {
 //    		tURL.setCellValueFactory(new PropertyValueFactory<Item, String>(item.getUrl()));
     	}
     	textAreaConsole.setText(output);
-    	tableView.getItems().setAll(result);
+//    	tableView.getItems().setAll(result);
+    	labelCount.setText("hi");
     }
     
-    @FXML
-    private void refineSearch() {
-    	System.out.println("refineSearch: " + textFieldKeyword.getText());
-    	List<Item> result = scraper.scrape(textFieldKeyword.getText());
-    	String output = "";
-    	for (Item item : result) {
-    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getUrl() + "\n";
-    	}
-    	textAreaConsole.setText(output);
-    }
+//    @FXML
+//    private void refineSearch() {
+//    	System.out.println("refineSearch: " + textFieldKeyword.getText());
+//    	List<Item> result = scraper.scrape(textFieldKeyword.getText());
+//    	String output = "";
+//    	for (Item item : result) {
+//    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getUrl() + "\n";
+//    	}
+//    	textAreaConsole.setText(output);
+//    	
+//    }
     
     /**
      * Called when the new button is pressed. Very dummy action - print something in the command prompt.
