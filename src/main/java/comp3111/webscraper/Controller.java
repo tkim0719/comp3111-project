@@ -15,6 +15,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -61,6 +63,7 @@ public class Controller {
     @FXML
     private TableColumn<Table_Item, String> tDate;
     
+    private List<Item> prev_result;
     
     private WebScraper scraper;
     
@@ -76,7 +79,10 @@ public class Controller {
      */
     @FXML
     private void initialize() {
-    	
+    	tTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+		tPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+		tURL.setCellValueFactory(new PropertyValueFactory<>("url"));
+		tDate.setCellValueFactory(new PropertyValueFactory<>("date"));
     }
     
     /** 
@@ -115,7 +121,7 @@ public class Controller {
      * Called when the search button is pressed.
      */
 	@FXML
-    private void actionSearch() {
+    public void actionSearch() {
     	System.out.println("actionSearch: " + textFieldKeyword.getText());
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
     	String output = "";
@@ -127,39 +133,80 @@ public class Controller {
     	String latest_url = "-";
     	
 		// task 4 - mkimaj
-    	tTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
-		tPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
-		tURL.setCellValueFactory(new PropertyValueFactory<>("url"));
-		tDate.setCellValueFactory(new PropertyValueFactory<>("date"));
-		
 		final ObservableList<Table_Item> data = FXCollections.observableArrayList();
-		
+
     	for (Item item : result) {
+    		// for console
     		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\t" + item.getDate() + "\n";
+    		
+    		// for summary
     		if(min > item.getPrice()) {
     			min = item.getPrice();
     			min_url = item.getUrl();
     		}
+    		
+    		// for table 
     		data.add(new Table_Item(item.getTitle(), item.getPrice(), item.getUrl(), item.getDate()));
     	}
+    	// for refine search
+    	prev_result = result;
+    	// for console
     	textAreaConsole.setText(output);
+    	// for table
     	tableView.setItems(data);
+    	// for summary
     	labelCount.setText(String.valueOf(size));
     	labelMin.setText(min_url);
     	labelLatest = new Hyperlink(latest_url);
     }
     
-//    @FXML
-//    private void refineSearch() {
-//    	System.out.println("refineSearch: " + textFieldKeyword.getText());
-//    	List<Item> result = scraper.scrape(textFieldKeyword.getText());
-//		List<Item> refined_result;
-//    	String output = "";
-//    	for (Item item : result) {
-//    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getUrl() + "\n";
-//    	}
-//    	textAreaConsole.setText(output);
-//    }
+	/**
+     * Called when the refine button is pressed.
+     */
+	
+	// task 5 - mkimaj
+	@FXML
+    private void refineSearch() {
+		String keyword = textFieldKeyword.getText();
+		System.out.println("refineSearch: " + keyword);
+		final List<Item> refinedResult = new ArrayList();
+
+    	for (Item item : prev_result) {
+    		boolean TitleContains = item.getTitle().toLowerCase().indexOf(keyword) != -1? true: false;
+    		if (TitleContains == true) { refinedResult.add(item); }
+    	}
+    	
+    	// dhleeab
+    	int size = refinedResult.size();
+    	double min = (size != 0) ? refinedResult.get(0).getPrice() : 0;
+    	String min_url = "-";
+    	String latest_url = "-";
+
+		String output = "";
+		final ObservableList<Table_Item> data = FXCollections.observableArrayList();
+    	
+    	for (Item item : refinedResult) {
+    		// for console
+    		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\t" + item.getDate() + "\n";
+    		
+    		// for summary
+    		if(min > item.getPrice()) {
+    			min = item.getPrice();
+    			min_url = item.getUrl();
+    		}
+    		
+    		// for table 
+    		data.add(new Table_Item(item.getTitle(), item.getPrice(), item.getUrl(), item.getDate()));
+    	}
+    	// for console
+    	textAreaConsole.setText(output);
+    	// for table
+    	tableView.setItems(data);
+    	// for summary
+    	labelCount.setText(String.valueOf(size));
+    	labelMin.setText(min_url);
+    	labelLatest = new Hyperlink(latest_url);
+    }
     
     /**
      * Called when the new button is pressed. Very dummy action - print something in the command prompt.
