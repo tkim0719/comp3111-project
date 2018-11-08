@@ -1,7 +1,6 @@
 package comp3111.webscraper;
 
 
-
 public class Item {
 	private String title ;
 	private double price ;
@@ -31,13 +30,13 @@ public class Item {
 		return date;
 	}
 	public void setDate(String date) {
-		
+		this.date = date;
 	}
 	public String getPortal() {
 		return portal;
 	}
 	public void setPortal(String portal) {
-		
+		this.portal = portal;
 	}
 
 }

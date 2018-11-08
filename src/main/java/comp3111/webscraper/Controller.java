@@ -12,6 +12,7 @@ import javafx.scene.control.TextField;
 //import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
+
 import java.util.List;
 
 
@@ -78,17 +79,18 @@ public class Controller {
     /**
      * Called when the search button is pressed.
      */
+
+    
     @FXML
     private void actionSearch() {
     	System.out.println("actionSearch: " + textFieldKeyword.getText());
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
     	String output = "";
+    	
     	for (Item item : result) {
-    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getUrl() + "\n";
+    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\t" + item.getDate() + "\n";
     	}
     	textAreaConsole.setText(output);
-    	////////////////////////////////
-    	labelCount.setText("Hi");
     }
     
 //    @FXML
