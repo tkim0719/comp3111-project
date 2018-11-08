@@ -15,7 +15,7 @@ import javafx.scene.control.Hyperlink;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.application.Application;
+import javafx.application.*;
 
 
 /**
@@ -87,10 +87,12 @@ public class Controller {
     	System.out.println("actionSearch: " + textFieldKeyword.getText());
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
     	String output = "";
+    	
     	int size = result.size();
     	double min = (size != 0) ? result.get(0).getPrice() : 0;
     	String min_url = "-";
     	String latest_url = "-";
+    	
     	for (Item item : result) {
     		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getUrl() + "\n";
     		if(min > item.getPrice()) {
@@ -99,20 +101,18 @@ public class Controller {
     		}
     	}
     	textAreaConsole.setText(output);
-    	////////////////////////////////
     	labelCount.setText(String.valueOf(size));
     	labelMin = new Hyperlink(min_url);
-    	
-    	labelMin.setOnAction(new EventHandler<ActionEvent>() {
-    		@Override
-        	public void handle(ActionEvent event) {
-    			getHostServices().showDocument(min_url);
-        	}
-    	});
-    	
     	labelLatest = new Hyperlink(latest_url);
-    	
     }
+    /*
+	labelMin.setOnAction(new EventHandler<ActionEvent>() {
+		@Override
+    	public void handle(ActionEvent event) {
+			Application.getHostServices().showDocument(labelMin.getText());
+    	}
+	});
+	*/
     
 //    @FXML
 //    private void refineSearch() {
