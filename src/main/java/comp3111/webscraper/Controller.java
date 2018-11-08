@@ -13,7 +13,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 import java.util.List;
-
+import java.text.SimpleDateFormat;  
+import java.util.Date; 
+import java.text.ParseException;
 
 /**
  * 
@@ -101,26 +103,32 @@ public class Controller {
     	}
     	
     	String min_url = "-";
-    	String latest_url = result.get(0).getDate();
+    	String latest_url = "-";
     	double avg_price = 0.0;
     	int numOfItems = 0; 
+    	String late_date = result.get(0).getDate();
     	
     	for (Item item : result) {
-<<<<<<< HEAD
     		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getUrl() + "\n";
     		if(item.getPrice() != 0) {
     			avg_price += item.getPrice();
     			numOfItems++;
     		}
     		if(min > item.getPrice() && item.getPrice() != 0) {
-=======
-    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\t" + item.getDate() + "\n";
-    		if(min > item.getPrice()) {
->>>>>>> 555f4f9bbc702b9140a1773001391586216ce81d
     			min = item.getPrice();
     			min_url = item.getUrl();
     		}
-    		
+    		try {
+	    		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	    		Date this_date = formatter1.parse(item.getDate());
+	    		Date min_date = formatter1.parse(late_date);
+	    		if(min_date.compareTo(this_date) < 0) {
+	    			late_date = item.getDate();
+	    			latest_url = item.getUrl();
+	    		}
+    		} catch(ParseException e) {
+    			e.printStackTrace();
+    		}
     	}
     	
     	textAreaConsole.setText(output);
