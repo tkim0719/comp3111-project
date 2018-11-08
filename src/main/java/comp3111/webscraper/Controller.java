@@ -15,6 +15,7 @@ import javafx.scene.control.Hyperlink;
 import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.application.Application;
 
 
 /**
@@ -87,7 +88,7 @@ public class Controller {
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
     	String output = "";
     	int size = result.size();
-    	double min = (size ! = 0) ? result.get(0).getPrice() : 0;
+    	double min = (size != 0) ? result.get(0).getPrice() : 0;
     	String min_url = "-";
     	String latest_url = "-";
     	for (Item item : result) {
@@ -102,11 +103,13 @@ public class Controller {
     	labelCount.setText(String.valueOf(size));
     	labelMin = new Hyperlink(min_url);
     	
+    	labelMin.setOnAction(new EventHandler<ActionEvent>() {
+    		@Override
+        	public void handle(ActionEvent event) {
+    			getHostServices().showDocument(min_url);
+        	}
+    	});
     	
-    	@Override
-    	public void handle(ActionEvent event) {
-    		getHostServices().showDocument(min_url);
-    	}
     	labelLatest = new Hyperlink(latest_url);
     	
     }
