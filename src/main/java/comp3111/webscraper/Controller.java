@@ -90,7 +90,7 @@ public class Controller {
     	String latest_url = "-";
     	
     	for (Item item : result) {
-    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getUrl() + "\n";
+    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\t" + item.getDate() + "\n";
     		if(min > item.getPrice()) {
     			min = item.getPrice();
     			min_url = item.getUrl();
