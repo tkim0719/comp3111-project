@@ -85,21 +85,47 @@ public class Controller {
     	String output = "";
     	
     	int size = result.size();
-    	double min = (size != 0) ? result.get(0).getPrice() : 0;
+    	double min = -1;
+    	if(size != 0) {
+    		for(int i = 0; i < size; i++) {
+    			if(result.get(i).getPrice() != 0) {
+    				min = result.get(i).getPrice();
+    				break;
+    			}
+    		}
+    	} else {
+	    	labelCount.setText("0");
+    		labelMin.setText("-");
+    		labelPrice.setText("-");
+    		labelLatest.setText("-");
+    	}
+    	
     	String min_url = "-";
-    	String latest_url = "-";
+    	String latest_url = result.get(0).getDate();
+    	double avg_price = 0.0;
+    	int numOfItems = 0; 
     	
     	for (Item item : result) {
     		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getUrl() + "\n";
-    		if(min > item.getPrice()) {
+    		if(item.getPrice() != 0) {
+    			avg_price += item.getPrice();
+    			numOfItems++;
+    		}
+    		if(min > item.getPrice() && item.getPrice() != 0) {
     			min = item.getPrice();
     			min_url = item.getUrl();
     		}
+    		
     	}
+    	
     	textAreaConsole.setText(output);
-    	labelCount.setText(String.valueOf(size));
-    	labelMin.setText(min_url);
-    	labelLatest = new Hyperlink(latest_url);
+    	
+    	if(size != 0) {
+	    	labelCount.setText(String.valueOf(size));
+	    	labelPrice.setText("$ " + String.valueOf(avg_price/numOfItems));
+	    	labelMin.setText(min_url);
+	    	labelLatest.setText(latest_url);
+    	}
     }
     
 //    @FXML
