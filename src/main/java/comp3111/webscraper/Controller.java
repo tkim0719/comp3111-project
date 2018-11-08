@@ -106,12 +106,17 @@ public class Controller {
     	int numOfItems = 0; 
     	
     	for (Item item : result) {
+<<<<<<< HEAD
     		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getUrl() + "\n";
     		if(item.getPrice() != 0) {
     			avg_price += item.getPrice();
     			numOfItems++;
     		}
     		if(min > item.getPrice() && item.getPrice() != 0) {
+=======
+    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\t" + item.getDate() + "\n";
+    		if(min > item.getPrice()) {
+>>>>>>> 555f4f9bbc702b9140a1773001391586216ce81d
     			min = item.getPrice();
     			min_url = item.getUrl();
     		}
