@@ -1,10 +1,8 @@
 /**
- * 
+ * team 6 - sudo korean
  */
 package comp3111.webscraper;
 
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,10 +12,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 
 /**
@@ -49,23 +49,28 @@ public class Controller {
     private TextArea textAreaConsole;
     
     @FXML
-    private TableView<Table_Item> tableView;
+    private TableView<Item> tableView;
     
     @FXML
-    private TableColumn<Table_Item, String> tTitle;
+    private TableColumn<Item, String> tTitle;
     
     @FXML
-    private TableColumn<Table_Item, String> tPrice;
+    private TableColumn<Item, String> tPrice;
     
     @FXML
-    private TableColumn<Table_Item, String> tURL;
+    private TableColumn<Item, String> tURL;
     
     @FXML
-    private TableColumn<Table_Item, String> tDate;
+    private TableColumn<Item, String> tDate;
     
-    private List<Item> prev_result;
+    
+    @FXML
+    private Button goButton;
+    private Button refineButton;
     
     private WebScraper scraper;
+    private List<Item> prev_result;
+    
     
     /**
      * Default controller
@@ -78,43 +83,11 @@ public class Controller {
      * Default initializer. It is empty.
      */
     @FXML
-    private void initialize() {
+    private void initialize() {    	
     	tTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
 		tPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 		tURL.setCellValueFactory(new PropertyValueFactory<>("url"));
 		tDate.setCellValueFactory(new PropertyValueFactory<>("date"));
-    }
-    
-    /** 
-     * Table_Item class
-     * @author minkyungkim
-     *
-     */
-    public static class Table_Item {
-    	
-    	public final SimpleStringProperty title;
-    	public final SimpleDoubleProperty price;
-    	public final SimpleStringProperty url;
-    	public final SimpleStringProperty date;
-     
-    	public Table_Item(String title, Double price, String url, String date) {
-            this.title = new SimpleStringProperty(title);
-            this.price = new SimpleDoubleProperty(price);
-            this.url = new SimpleStringProperty(url);
-            this.date = new SimpleStringProperty(date);
-        }
-    	
-    	public String getTitle() { return title.get(); }
-        public void setTitle(String title) { this.title.set(title); }
- 
-        public Double getPrice() { return price.get(); }
-        public void setPrice(Double price) { this.price.set(price); }
- 
-        public String getUrl() { return url.get(); }
-        public void setUrl(String url) { this.url.set(url); }
-        
-        public String getDate() { return date.get(); }
-        public void setDate(String date) { this.date.set(date); }
     }
     
     /**
@@ -133,7 +106,8 @@ public class Controller {
     	String latest_url = "-";
     	
 		// task 4 - mkimaj
-		final ObservableList<Table_Item> data = FXCollections.observableArrayList();
+//		final ObservableList<Table_Item> data = FXCollections.observableArrayList();
+    	final ObservableList<Item> data = FXCollections.observableArrayList();
 
     	for (Item item : result) {
     		// for console
@@ -146,14 +120,17 @@ public class Controller {
     		}
     		
     		// for table 
-    		data.add(new Table_Item(item.getTitle(), item.getPrice(), item.getUrl(), item.getDate()));
+    		data.add(item);
     	}
     	// for refine search
     	prev_result = result;
+    	
     	// for console
     	textAreaConsole.setText(output);
+    	
     	// for table
     	tableView.setItems(data);
+    	
     	// for summary
     	labelCount.setText(String.valueOf(size));
     	labelMin.setText(min_url);
@@ -167,6 +144,7 @@ public class Controller {
 	// task 5 - mkimaj
 	@FXML
     private void refineSearch() {
+		
 		String keyword = textFieldKeyword.getText();
 		System.out.println("refineSearch: " + keyword);
 		final List<Item> refinedResult = new ArrayList();
@@ -183,7 +161,7 @@ public class Controller {
     	String latest_url = "-";
 
 		String output = "";
-		final ObservableList<Table_Item> data = FXCollections.observableArrayList();
+		final ObservableList<Item> data = FXCollections.observableArrayList();
     	
     	for (Item item : refinedResult) {
     		// for console
@@ -196,16 +174,19 @@ public class Controller {
     		}
     		
     		// for table 
-    		data.add(new Table_Item(item.getTitle(), item.getPrice(), item.getUrl(), item.getDate()));
+    		data.add(item);
     	}
     	// for console
     	textAreaConsole.setText(output);
+    	
     	// for table
     	tableView.setItems(data);
+    	
     	// for summary
     	labelCount.setText(String.valueOf(size));
     	labelMin.setText(min_url);
     	labelLatest = new Hyperlink(latest_url);
+
     }
     
     /**
