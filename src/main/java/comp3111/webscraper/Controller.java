@@ -83,12 +83,23 @@ public class Controller {
     	System.out.println("actionSearch: " + textFieldKeyword.getText());
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
     	String output = "";
+    	
+    	int size = result.size();
+    	double min = (size != 0) ? result.get(0).getPrice() : 0;
+    	String min_url = "-";
+    	String latest_url = "-";
+    	
     	for (Item item : result) {
     		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getUrl() + "\n";
+    		if(min > item.getPrice()) {
+    			min = item.getPrice();
+    			min_url = item.getUrl();
+    		}
     	}
     	textAreaConsole.setText(output);
-    	////////////////////////////////
-    	labelCount.setText("Hi");
+    	labelCount.setText(String.valueOf(size));
+    	labelMin.setText(min_url);
+    	labelLatest = new Hyperlink(latest_url);
     }
     
 //    @FXML
