@@ -15,7 +15,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -225,7 +224,6 @@ public class Controller {
 	    	labelLatest.setText(latest_url);
     	}
     	
-    	refineButton.setDisable(true);
     }
 	
 
