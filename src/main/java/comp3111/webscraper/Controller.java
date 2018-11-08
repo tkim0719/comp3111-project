@@ -15,7 +15,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
-
 import java.util.List;
 
 
@@ -115,13 +114,19 @@ public class Controller {
     /**
      * Called when the search button is pressed.
      */
-
 	@FXML
     private void actionSearch() {
     	System.out.println("actionSearch: " + textFieldKeyword.getText());
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
     	String output = "";
     	
+    	// dhleeab
+    	int size = result.size();
+    	double min = (size != 0) ? result.get(0).getPrice() : 0;
+    	String min_url = "-";
+    	String latest_url = "-";
+    	
+		// task 4 - mkimaj
     	tTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
 		tPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 		tURL.setCellValueFactory(new PropertyValueFactory<>("url"));
@@ -131,10 +136,17 @@ public class Controller {
 		
     	for (Item item : result) {
     		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\t" + item.getDate() + "\n";
+    		if(min > item.getPrice()) {
+    			min = item.getPrice();
+    			min_url = item.getUrl();
+    		}
     		data.add(new Table_Item(item.getTitle(), item.getPrice(), item.getUrl(), item.getDate()));
     	}
     	textAreaConsole.setText(output);
     	tableView.setItems(data);
+    	labelCount.setText(String.valueOf(size));
+    	labelMin.setText(min_url);
+    	labelLatest = new Hyperlink(latest_url);
     }
     
 //    @FXML
