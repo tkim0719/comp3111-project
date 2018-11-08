@@ -4,6 +4,8 @@
 package comp3111.webscraper;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.stage.Stage;
 
 import javafx.fxml.FXMLLoader;

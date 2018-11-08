@@ -14,6 +14,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -83,11 +85,13 @@ public class Controller {
      * Default initializer. It is empty.
      */
     @FXML
-    private void initialize() {    	
+    private void initialize() {
     	tTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
 		tPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 		tURL.setCellValueFactory(new PropertyValueFactory<>("url"));
 		tDate.setCellValueFactory(new PropertyValueFactory<>("date"));
+		
+		
     }
     
     /**
@@ -167,7 +171,7 @@ public class Controller {
 	
 	// task 5 - mkimaj
 	@FXML
-    private void refineSearch() {
+    private void refineSearch(ActionEvent event) {
 		
 		String keyword = textFieldKeyword.getText();
 		System.out.println("refineSearch: " + keyword);
@@ -183,6 +187,8 @@ public class Controller {
     	double min = (size != 0) ? refinedResult.get(0).getPrice() : 0;
     	String min_url = "-";
     	String latest_url = "-";
+    	double avg_price = 0.0;
+    	int numOfItems = 0; 
 
 		String output = "";
 		final ObservableList<Item> data = FXCollections.observableArrayList();
@@ -192,6 +198,11 @@ public class Controller {
     		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\t" + item.getDate() + "\n";
     		
     		// for summary
+    		if(item.getPrice() != 0) {
+    			avg_price += item.getPrice();
+    			numOfItems++;
+    		}
+    		
     		if(min > item.getPrice()) {
     			min = item.getPrice();
     			min_url = item.getUrl();
@@ -207,11 +218,17 @@ public class Controller {
     	tableView.setItems(data);
     	
     	// for summary
-    	labelCount.setText(String.valueOf(size));
-    	labelMin.setText(min_url);
-    	labelLatest = new Hyperlink(latest_url);
-
+    	if(size != 0) {
+	    	labelCount.setText(String.valueOf(size));
+	    	labelPrice.setText("$ " + String.valueOf(avg_price/numOfItems));
+	    	labelMin.setText(min_url);
+	    	labelLatest.setText(latest_url);
+    	}
+    	
+    	refineButton.setDisable(true);
     }
+	
+
     
     /**
      * Called when the new button is pressed. Very dummy action - print something in the command prompt.
