@@ -3,15 +3,19 @@
  */
 package comp3111.webscraper;
 
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -44,19 +48,19 @@ public class Controller {
     private TextArea textAreaConsole;
     
     @FXML
-    private TableView<List<String>> tableView;
+    private TableView<Table_Item> tableView;
     
     @FXML
-    private TableColumn<List<String>, String> tTitle;
+    private TableColumn<Table_Item, String> tTitle;
     
     @FXML
-    private TableColumn<List<String>, String> tPrice;
+    private TableColumn<Table_Item, String> tPrice;
     
     @FXML
-    private TableColumn<List<String>, String> tURL;
+    private TableColumn<Table_Item, String> tURL;
     
     @FXML
-    private TableColumn<List<String>, String> tDate;
+    private TableColumn<Table_Item, String> tDate;
     
     
     private WebScraper scraper;
@@ -76,22 +80,61 @@ public class Controller {
     	
     }
     
+    /** 
+     * Table_Item class
+     * @author minkyungkim
+     *
+     */
+    public static class Table_Item {
+    	
+    	public final SimpleStringProperty title;
+    	public final SimpleDoubleProperty price;
+    	public final SimpleStringProperty url;
+    	public final SimpleStringProperty date;
+     
+    	public Table_Item(String title, Double price, String url, String date) {
+            this.title = new SimpleStringProperty(title);
+            this.price = new SimpleDoubleProperty(price);
+            this.url = new SimpleStringProperty(url);
+            this.date = new SimpleStringProperty(date);
+        }
+    	
+    	public String getTitle() { return title.get(); }
+        public void setTitle(String title) { this.title.set(title); }
+ 
+        public Double getPrice() { return price.get(); }
+        public void setPrice(Double price) { this.price.set(price); }
+ 
+        public String getUrl() { return url.get(); }
+        public void setUrl(String url) { this.url.set(url); }
+        
+        public String getDate() { return date.get(); }
+        public void setDate(String date) { this.date.set(date); }
+    }
+    
     /**
      * Called when the search button is pressed.
      */
 
-    
 	@FXML
     private void actionSearch() {
     	System.out.println("actionSearch: " + textFieldKeyword.getText());
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
     	String output = "";
+    	
+    	tTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+		tPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+		tURL.setCellValueFactory(new PropertyValueFactory<>("url"));
+		tDate.setCellValueFactory(new PropertyValueFactory<>("date"));
+		
+		final ObservableList<Table_Item> data = FXCollections.observableArrayList();
 		
     	for (Item item : result) {
-    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\t" + item.getDate() + "\n";
+    		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\t" + item.getDate() + "\n";
+    		data.add(new Table_Item(item.getTitle(), item.getPrice(), item.getUrl(), item.getDate()));
     	}
     	textAreaConsole.setText(output);
-    	tableView.getItems()
+    	tableView.setItems(data);
     }
     
 //    @FXML
