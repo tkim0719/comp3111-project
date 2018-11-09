@@ -6,12 +6,15 @@ package comp3111.webscraper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Button;
@@ -84,6 +87,34 @@ public class Controller {
     public Controller() {
     	scraper = new WebScraper();
     }
+    
+    public class HyperlinkCell implements  Callback<TableColumn<Item, Hyperlink>, TableCell<Item, Hyperlink>> {
+    	 
+        @Override
+        public TableCell<Item, Hyperlink> call(TableColumn<Item, Hyperlink> arg) {
+            TableCell<Item, Hyperlink> cell = new TableCell<Item, Hyperlink>() {
+                @Override
+                protected void updateItem(Hyperlink url, boolean empty) {
+                    setGraphic(url);
+                    url.setOnAction(new EventHandler<ActionEvent>() {
+                      	 
+                        @Override
+                        public void handle(ActionEvent event) {
+                        	try {
+                    			Desktop.getDesktop().browse(new URL(url.getText()).toURI());
+                    		} catch (IOException | URISyntaxException e) {
+                    			e.printStackTrace();
+                    		}
+                        }
+                    });;
+                    
+                }
+            };
+            
+            
+            return cell;
+        }
+    }
 
     /**
      * Default initializer. It is empty.
@@ -93,8 +124,11 @@ public class Controller {
     	tTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
 		tPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 		tURL.setCellValueFactory(new PropertyValueFactory<>("url"));
+		tURL.setCellFactory(new HyperlinkCell());
 		tDate.setCellValueFactory(new PropertyValueFactory<>("date"));
     }
+    
+    
     
     /**
      * Called when the search button is pressed.
@@ -126,7 +160,7 @@ public class Controller {
     	}
     	
     	String min_url = "-";
-    	String latest_url = result.get(0).getUrl();
+    	String latest_url = result.get(0).getUrl().getText();
     	double avg_price = 0.0;
     	int numOfItems = 0; 
     	
@@ -145,7 +179,7 @@ public class Controller {
 
     		if(min > item.getPrice() && item.getPrice() != 0) {
     			min = item.getPrice();
-    			min_url = item.getUrl();
+    			min_url = item.getUrl().getText();
     		}
     		
     		// for table 
@@ -200,7 +234,7 @@ public class Controller {
     	if(size != 0) {
     		for(int i = 0; i < size; i++) {
     			if (i == 0) {
-    				latest_url = refinedResult.get(0).getUrl();
+    				latest_url = refinedResult.get(0).getUrl().getText();
     			}
     			if(refinedResult.get(i).getPrice() != 0) {
     				min = refinedResult.get(i).getPrice();
@@ -233,7 +267,7 @@ public class Controller {
 
     		if(min > item.getPrice() && item.getPrice() != 0) {
     			min = item.getPrice();
-    			min_url = item.getUrl();
+    			min_url = item.getUrl().getText();
     		}
     		
     		// for table 
