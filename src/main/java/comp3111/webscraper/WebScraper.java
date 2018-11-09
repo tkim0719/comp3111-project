@@ -124,6 +124,7 @@ public class WebScraper {
 			}
 			client.close();
 			return result;
+			
 		} catch (Exception e) {
 			System.out.println(e);
 		}
