@@ -5,6 +5,7 @@ package comp3111.webscraper;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -14,8 +15,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Button;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,10 +63,12 @@ public class Controller {
     @FXML
     private TableColumn<Item, String> tDate;
     
+    @FXML
+    private Button refineButton;
     
     @FXML
     private Button goButton;
-    private Button refineButton;
+    
     
     private WebScraper scraper;
     private List<Item> prev_result;
@@ -89,15 +90,16 @@ public class Controller {
 		tPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 		tURL.setCellValueFactory(new PropertyValueFactory<>("url"));
 		tDate.setCellValueFactory(new PropertyValueFactory<>("date"));
-		
-		
     }
     
     /**
      * Called when the search button is pressed.
      */
 	@FXML
-    public void actionSearch() {
+    public void actionSearch(ActionEvent event) {
+		// disable refine button
+		refineButton.setDisable(false);
+		
     	System.out.println("actionSearch: " + textFieldKeyword.getText());
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
     	String output = "";
@@ -125,7 +127,6 @@ public class Controller {
     	int numOfItems = 0; 
     	
 		// task 4 - mkimaj
-//		final ObservableList<Table_Item> data = FXCollections.observableArrayList();
     	final ObservableList<Item> data = FXCollections.observableArrayList();
 
     	for (Item item : result) {
@@ -175,7 +176,9 @@ public class Controller {
 	
 	// task 5 - mkimaj
 	@FXML
-    private void refineSearch() {
+    private void refineSearch(ActionEvent event) {
+		// disable refine button
+		refineButton.setDisable(true);
 		
 		String keyword = textFieldKeyword.getText();
 		System.out.println("refineSearch: " + keyword);
@@ -189,8 +192,12 @@ public class Controller {
     	// dhleeab
     	int size = refinedResult.size();
     	double min = -1;
+    	String latest_url = "-"; // refineResult.get(0) gets error don't know why so I changed this part @dhleeab
     	if(size != 0) {
     		for(int i = 0; i < size; i++) {
+    			if (i == 0) {
+    				latest_url = refinedResult.get(0).getDate();
+    			}
     			if(refinedResult.get(i).getPrice() != 0) {
     				min = refinedResult.get(i).getPrice();
     				break;
@@ -204,7 +211,6 @@ public class Controller {
     	}
     	
     	String min_url = "-";
-    	String latest_url = refinedResult.get(0).getDate();
     	double avg_price = 0.0;
     	int numOfItems = 0; 
 
@@ -238,7 +244,7 @@ public class Controller {
     	// for summary
     	if(size != 0) {
 	    	labelCount.setText(String.valueOf(size));
-	    	if (avg_price == 0.0) {
+	    	if (avg_price == 0) {
 	    		labelPrice.setText("$ " + Double.toString(0.0));
 	    	}
 	    	else {
@@ -247,8 +253,6 @@ public class Controller {
 	    	labelMin.setText(min_url);
 	    	labelLatest.setText(latest_url);
     	}
-    	
-    	goButton.setDisable(true);
     	
     }
 
