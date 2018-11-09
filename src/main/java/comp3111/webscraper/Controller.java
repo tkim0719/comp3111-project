@@ -16,6 +16,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Button;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +62,7 @@ public class Controller {
     private TableColumn<Item, String> tPrice;
     
     @FXML
-    private TableColumn<Item, String> tURL;
+    private TableColumn<Item, Hyperlink> tURL;
     
     @FXML
     private TableColumn<Item, String> tDate;
@@ -71,7 +75,7 @@ public class Controller {
     
     
     private WebScraper scraper;
-    private List<Item> prev_result;
+    private List<Item> prev_result;    
     
     
     /**
@@ -122,7 +126,7 @@ public class Controller {
     	}
     	
     	String min_url = "-";
-    	String latest_url = result.get(0).getDate();
+    	String latest_url = result.get(0).getUrl();
     	double avg_price = 0.0;
     	int numOfItems = 0; 
     	
@@ -196,7 +200,7 @@ public class Controller {
     	if(size != 0) {
     		for(int i = 0; i < size; i++) {
     			if (i == 0) {
-    				latest_url = refinedResult.get(0).getDate();
+    				latest_url = refinedResult.get(0).getUrl();
     			}
     			if(refinedResult.get(i).getPrice() != 0) {
     				min = refinedResult.get(i).getPrice();
@@ -254,7 +258,23 @@ public class Controller {
 	    	labelLatest.setText(latest_url);
     	}
     	
-    }
+	}
+	
+	public void MinClick(ActionEvent event) {
+        try {
+			Desktop.getDesktop().browse(new URL(labelMin.getText()).toURI());
+		} catch (IOException | URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void LatestClick(ActionEvent event) {
+		try {
+			Desktop.getDesktop().browse(new URL(labelLatest.getText()).toURI());
+		} catch (IOException | URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
 
     
     /**

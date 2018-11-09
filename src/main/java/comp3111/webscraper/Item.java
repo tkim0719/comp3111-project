@@ -1,5 +1,7 @@
 package comp3111.webscraper;
 
+import javafx.scene.control.Hyperlink;
+
 
 public class Item {
 	private String title ;
