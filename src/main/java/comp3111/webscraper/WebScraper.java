@@ -1,5 +1,9 @@
 package comp3111.webscraper;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
 
@@ -7,6 +11,9 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+
+import javafx.event.ActionEvent;
+
 import java.util.Vector;
 
 

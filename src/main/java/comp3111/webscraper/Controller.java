@@ -9,12 +9,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Callback;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Button;
@@ -88,33 +86,7 @@ public class Controller {
     	scraper = new WebScraper();
     }
     
-    public class HyperlinkCell implements  Callback<TableColumn<Item, Hyperlink>, TableCell<Item, Hyperlink>> {
-    	 
-        @Override
-        public TableCell<Item, Hyperlink> call(TableColumn<Item, Hyperlink> arg) {
-            TableCell<Item, Hyperlink> cell = new TableCell<Item, Hyperlink>() {
-                @Override
-                protected void updateItem(Hyperlink url, boolean empty) {
-                    setGraphic(url);
-                    url.setOnAction(new EventHandler<ActionEvent>() {
-                      	 
-                        @Override
-                        public void handle(ActionEvent event) {
-                        	try {
-                    			Desktop.getDesktop().browse(new URL(url.getText()).toURI());
-                    		} catch (IOException | URISyntaxException e) {
-                    			e.printStackTrace();
-                    		}
-                        }
-                    });;
-                    
-                }
-            };
-            
-            
-            return cell;
-        }
-    }
+    
 
     /**
      * Default initializer. It is empty.
@@ -124,7 +96,6 @@ public class Controller {
     	tTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
 		tPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 		tURL.setCellValueFactory(new PropertyValueFactory<>("url"));
-		tURL.setCellFactory(new HyperlinkCell());
 		tDate.setCellValueFactory(new PropertyValueFactory<>("date"));
     }
     
@@ -169,7 +140,7 @@ public class Controller {
 
     	for (Item item : result) {
     		// for console
-    		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\t" + item.getDate() + "\n";
+    		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
     		
     		// for summary
     		if(item.getPrice() != 0) {
@@ -181,6 +152,18 @@ public class Controller {
     			min = item.getPrice();
     			min_url = item.getUrl().getText();
     		}
+    		
+    		EventHandler<ActionEvent> hyperlinkHandler = new EventHandler<ActionEvent>() {
+    		    public void handle(ActionEvent event) {
+    		    	try {
+    					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());
+    				} catch (IOException | URISyntaxException e) {
+    					e.printStackTrace();
+    				}
+    		    }
+    		};
+    		
+    		item.getUrl().setOnAction(hyperlinkHandler);
     		
     		// for table 
     		data.add(item);
@@ -220,7 +203,7 @@ public class Controller {
 		
 		String keyword = textFieldKeyword.getText();
 		System.out.println("refineSearch: " + keyword);
-		final List<Item> refinedResult = new ArrayList();
+		final List<Item> refinedResult = new ArrayList<Item> ();
 
     	for (Item item : prev_result) {
     		boolean TitleContains = item.getTitle().toLowerCase().indexOf(keyword) != -1? true: false;
@@ -257,7 +240,7 @@ public class Controller {
     	
     	for (Item item : refinedResult) {
     		// for console
-    		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\t" + item.getDate() + "\n";
+    		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
     		
     		// for summary
     		if(item.getPrice() != 0) {
@@ -269,6 +252,18 @@ public class Controller {
     			min = item.getPrice();
     			min_url = item.getUrl().getText();
     		}
+    		
+    		EventHandler<ActionEvent> hyperlinkHandler = new EventHandler<ActionEvent>() {
+    		    public void handle(ActionEvent event) {
+    		    	try {
+    					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());
+    				} catch (IOException | URISyntaxException e) {
+    					e.printStackTrace();
+    				}
+    		    }
+    		};
+    		
+    		item.getUrl().setOnAction(hyperlinkHandler);
     		
     		// for table 
     		data.add(item);

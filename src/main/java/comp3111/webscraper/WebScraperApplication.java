@@ -5,11 +5,9 @@ package comp3111.webscraper;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
 import javafx.scene.Scene;
-import javafx.scene.control.Hyperlink;
 
 
 /**
@@ -40,12 +38,6 @@ import javafx.scene.control.Hyperlink;
 public class WebScraperApplication extends Application {
 
     private static final String UI_FILE = "/ui.fxml";  //It is very important that you put the file under folder src/main/resources/
-	
-    @FXML 
-    private Hyperlink labelMin; 
-
-    @FXML 
-    private Hyperlink labelLatest;
     
 	/* 
 	 * @see javafx.application.Application#start(javafx.stage.Stage)
