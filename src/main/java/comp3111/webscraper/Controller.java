@@ -12,13 +12,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Button;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 
 /**
@@ -158,7 +158,12 @@ public class Controller {
     	// for summary
     	if(size != 0) {
 	    	labelCount.setText(String.valueOf(size));
-	    	labelPrice.setText("$ " + String.valueOf(avg_price/numOfItems));
+	    	if (avg_price == 0.0) {
+	    		labelPrice.setText("$ " + Double.toString(0.0));
+	    	}
+	    	else {
+	    		labelPrice.setText("$ " + Double.toString(avg_price/numOfItems));
+	    	}
 	    	labelMin.setText(min_url);
 	    	labelLatest.setText(latest_url);
     	}
@@ -170,7 +175,7 @@ public class Controller {
 	
 	// task 5 - mkimaj
 	@FXML
-    private void refineSearch(ActionEvent event) {
+    private void refineSearch() {
 		
 		String keyword = textFieldKeyword.getText();
 		System.out.println("refineSearch: " + keyword);
@@ -183,9 +188,23 @@ public class Controller {
     	
     	// dhleeab
     	int size = refinedResult.size();
-    	double min = (size != 0) ? refinedResult.get(0).getPrice() : 0;
+    	double min = -1;
+    	if(size != 0) {
+    		for(int i = 0; i < size; i++) {
+    			if(refinedResult.get(i).getPrice() != 0) {
+    				min = refinedResult.get(i).getPrice();
+    				break;
+    			}
+    		}
+    	} else {
+	    	labelCount.setText("0");
+    		labelMin.setText("-");
+    		labelPrice.setText("-");
+    		labelLatest.setText("-");
+    	}
+    	
     	String min_url = "-";
-    	String latest_url = "-";
+    	String latest_url = refinedResult.get(0).getDate();
     	double avg_price = 0.0;
     	int numOfItems = 0; 
 
@@ -201,8 +220,8 @@ public class Controller {
     			avg_price += item.getPrice();
     			numOfItems++;
     		}
-    		
-    		if(min > item.getPrice()) {
+
+    		if(min > item.getPrice() && item.getPrice() != 0) {
     			min = item.getPrice();
     			min_url = item.getUrl();
     		}
@@ -219,13 +238,19 @@ public class Controller {
     	// for summary
     	if(size != 0) {
 	    	labelCount.setText(String.valueOf(size));
-	    	labelPrice.setText("$ " + String.valueOf(avg_price/numOfItems));
+	    	if (avg_price == 0.0) {
+	    		labelPrice.setText("$ " + Double.toString(0.0));
+	    	}
+	    	else {
+	    		labelPrice.setText("$ " + Double.toString(avg_price/numOfItems));
+	    	}
 	    	labelMin.setText(min_url);
 	    	labelLatest.setText(latest_url);
     	}
     	
+    	goButton.setDisable(true);
+    	
     }
-	
 
     
     /**
