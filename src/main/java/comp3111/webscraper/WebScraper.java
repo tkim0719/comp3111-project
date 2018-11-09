@@ -89,31 +89,42 @@ public class WebScraper {
 		try {
 			String searchUrl = DEFAULT_URL + "search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
 			HtmlPage page = client.getPage(searchUrl);
-
 			
-			List<?> items = (List<?>) page.getByXPath("//li[@class='result-row']");
-			
+			List<?> items = (List<?>) page.getByXPath("//li[@class='result-row']");	
 			Vector<Item> result = new Vector<Item>();
 
 			for (int i = 0; i < items.size(); i++) {
 				HtmlElement htmlItem = (HtmlElement) items.get(i);
+				
 				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//p[@class='result-info']/a"));
 				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//a/span[@class='result-price']"));
+				HtmlElement spanDate = ((HtmlElement) htmlItem.getFirstByXPath(".//time[@class='result-date']"));
 
 				// It is possible that an item doesn't have any price, we set the price to 0.0
 				// in this case
 				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
+				String postDate = spanDate.getAttribute("datetime");
+				String Url = DEFAULT_URL + itemAnchor.getHrefAttribute();
+				String Portal = "";
+				
+				boolean isCraigslist = Url.indexOf("craigslist") != -1? true: false;
+				boolean isCarousell = Url.indexOf("carousell") != -1? true: false;
+				
+				if (isCraigslist == true)  Portal = "craigslist";
+				if (isCarousell == true)  Portal = "carousell";
 
 				Item item = new Item();
 				item.setTitle(itemAnchor.asText());
-				item.setUrl(DEFAULT_URL + itemAnchor.getHrefAttribute());
-
+				item.setUrl(Url);
 				item.setPrice(new Double(itemPrice.replace("$", "")));
-
+				item.setDate(postDate);
+				item.setPortal(Portal);
+				
 				result.add(item);
 			}
 			client.close();
 			return result;
+			
 		} catch (Exception e) {
 			System.out.println(e);
 		}
