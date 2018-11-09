@@ -153,7 +153,7 @@ public class Controller {
     			min_url = item.getUrl().getText();
     		}
     		
-    		EventHandler<ActionEvent> hyperlinkHandler = new EventHandler<ActionEvent>() {
+    		EventHandler<ActionEvent> hyperlinkHandler_action = new EventHandler<ActionEvent>() {
     		    public void handle(ActionEvent event) {
     		    	try {
     					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());
@@ -163,7 +163,7 @@ public class Controller {
     		    }
     		};
     		
-    		item.getUrl().setOnAction(hyperlinkHandler);
+    		item.getUrl().setOnAction(hyperlinkHandler_action);
     		
     		// for table 
     		data.add(item);
@@ -253,7 +253,7 @@ public class Controller {
     			min_url = item.getUrl().getText();
     		}
     		
-    		EventHandler<ActionEvent> hyperlinkHandler = new EventHandler<ActionEvent>() {
+    		EventHandler<ActionEvent> hyperlinkHandler_refine = new EventHandler<ActionEvent>() {
     		    public void handle(ActionEvent event) {
     		    	try {
     					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());
@@ -263,7 +263,7 @@ public class Controller {
     		    }
     		};
     		
-    		item.getUrl().setOnAction(hyperlinkHandler);
+    		item.getUrl().setOnAction(hyperlinkHandler_refine);
     		
     		// for table 
     		data.add(item);
