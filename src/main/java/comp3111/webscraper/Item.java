@@ -1,11 +1,5 @@
 package comp3111.webscraper;
 
-import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-
-import javafx.event.ActionEvent;
 import javafx.scene.control.Hyperlink;
 
 

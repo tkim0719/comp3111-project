@@ -231,10 +231,12 @@ public class Controller {
     	int size = refinedResult.size();
     	double min = -1;
     	String latest_url = "-"; // refineResult.get(0) gets error don't know why so I changed this part @dhleeab
+    	String late_date = "-"; 
     	if(size != 0) {
     		for(int i = 0; i < size; i++) {
     			if (i == 0) {
     				latest_url = refinedResult.get(0).getUrl().getText();
+    				late_date = refinedResult.get(0).getDate();
     			}
     			if(refinedResult.get(i).getPrice() != 0) {
     				min = refinedResult.get(i).getPrice();
@@ -250,7 +252,7 @@ public class Controller {
     	
     	String min_url = "-";
     	double avg_price = 0.0;
-    	int numOfItems = 0; 
+    	int numOfItems = 0;
 
 		String output = "";
 		final ObservableList<Item> data = FXCollections.observableArrayList();
@@ -279,6 +281,18 @@ public class Controller {
     				}
     		    }
     		};
+    		
+    		try {
+	    		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	    		Date this_date = formatter1.parse(item.getDate());
+	    		Date min_date = formatter1.parse(late_date);
+	    		if(min_date.compareTo(this_date) > 0) {
+	    			late_date = item.getDate();
+	    			latest_url = item.getUrl().getText();
+	    		}
+    		} catch(ParseException e) {
+    			e.printStackTrace();
+    		}
     		
     		item.getUrl().setOnAction(hyperlinkHandler_refine);
     		
@@ -350,8 +364,8 @@ public class Controller {
     private void actionAboutTeam() {
     	Alert alert = new Alert(AlertType.INFORMATION);
     	alert.setTitle("Sudo Korean Introduction");
-    	alert.setHeaderText(null);
-    	alert.setContentText("KIM, Tae Woo/ KIM, Min Kyung/ LEE, Do Hyun\n"
+    	alert.setHeaderText("Team Information");
+    	alert.setContentText("KIM, Tae Woo/ KIM, MinKyung/ LEE, Do Hyun\n"
     			+ "/mkimaj@connect.ust.hk/ dhleeab@connect.ust.hk"
     			+ "tkimae/ mkimaj/ dhleeab");
 
