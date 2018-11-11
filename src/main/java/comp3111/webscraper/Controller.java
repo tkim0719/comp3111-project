@@ -82,9 +82,10 @@ public class Controller {
     private void actionSearch() {
     	System.out.println("actionSearch: " + textFieldKeyword.getText());
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
+    	System.out.println("Additional website chosen is Carousell");
     	String output = "";
     	for (Item item : result) {
-    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getUrl() + "\n";
+    		output += item.getTitle() + "\t" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\n";
     	}
     	textAreaConsole.setText(output);
     	////////////////////////////////

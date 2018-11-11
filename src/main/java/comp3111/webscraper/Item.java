@@ -36,8 +36,7 @@ public class Item {
 	public String getPortal() {
 		return portal;
 	}
-	public void setPortal(String portal) {
-		
+	public void setPortal(String b) {
+		portal = b;
 	}
-
 }
