@@ -16,6 +16,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Button;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -23,7 +25,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.text.SimpleDateFormat;  
+import java.util.Date; 
+import java.text.ParseException;
 
 /**
  * 
@@ -113,7 +117,7 @@ public class Controller {
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
     	String output = "";
     	
-    	// dhleeab
+    	// task 1 - dhleeab 
     	int size = result.size();
     	double min = -1;
     	if(size != 0) {
@@ -134,6 +138,7 @@ public class Controller {
     	String latest_url = result.get(0).getUrl().getText();
     	double avg_price = 0.0;
     	int numOfItems = 0; 
+    	String late_date = result.get(0).getDate();
     	
 		// task 4 - mkimaj
     	final ObservableList<Item> data = FXCollections.observableArrayList();
@@ -142,7 +147,7 @@ public class Controller {
     		// for console
     		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
     		
-    		// for summary
+    		// for summary task 1 - dhleeab
     		if(item.getPrice() != 0) {
     			avg_price += item.getPrice();
     			numOfItems++;
@@ -164,7 +169,19 @@ public class Controller {
     		};
     		
     		item.getUrl().setOnAction(hyperlinkHandler_action);
-    		
+
+    		try {
+	    		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	    		Date this_date = formatter1.parse(item.getDate());
+	    		Date min_date = formatter1.parse(late_date);
+	    		if(min_date.compareTo(this_date) > 0) {
+	    			late_date = item.getDate();
+	    			latest_url = item.getUrl().getText();
+	    		}
+    		} catch(ParseException e) {
+    			e.printStackTrace();
+    		}    		
+
     		// for table 
     		data.add(item);
     	}
@@ -210,7 +227,7 @@ public class Controller {
     		if (TitleContains == true) { refinedResult.add(item); }
     	}
     	
-    	// dhleeab
+    	// task 1 - dhleeab
     	int size = refinedResult.size();
     	double min = -1;
     	String latest_url = "-"; // refineResult.get(0) gets error don't know why so I changed this part @dhleeab
@@ -309,9 +326,36 @@ public class Controller {
     /**
      * Called when the new button is pressed. Very dummy action - print something in the command prompt.
      */
+	// task 6 - dhleeab
     @FXML
     private void actionNew() {
+    	//disable the menu item 
     	System.out.println("actionNew");
+    }
+    
+    @FXML
+    private void actionClose() {
+//    	WebScraperApplication.main(new String[] {});
+//    	System.out.println("actionClose");
+    }
+    
+    @FXML
+    private void actionQuit() {
+    	//Window stage = node.getScene().getWindow();
+    	//stage.hide();
+    	System.out.println("actionQuit");
+    }
+    
+    @FXML
+    private void actionAboutTeam() {
+    	Alert alert = new Alert(AlertType.INFORMATION);
+    	alert.setTitle("Sudo Korean Introduction");
+    	alert.setHeaderText(null);
+    	alert.setContentText("KIM, Tae Woo/ KIM, Min Kyung/ LEE, Do Hyun\n"
+    			+ "/mkimaj@connect.ust.hk/ dhleeab@connect.ust.hk"
+    			+ "tkimae/ mkimaj/ dhleeab");
+
+    	alert.showAndWait();
     }
 }
 

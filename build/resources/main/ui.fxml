@@ -41,10 +41,12 @@
             <MenuItem mnemonicParsing="false" onAction="#actionNew" text="New (call Controller.actionNew())" />
             <MenuItem mnemonicParsing="false" text="Open" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Close" />
+            <MenuItem mnemonicParsing="false" onAction="#actionClose" text="Close" />
             <MenuItem mnemonicParsing="false" text="Save" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
+            <MenuItem mnemonicParsing="false" onAction="#actionQuit" text="Quit" />
+            <MenuItem mnemonicParsing="false" onAction="#actionAboutTeam" text="About Sudo Korean" />
+            
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
