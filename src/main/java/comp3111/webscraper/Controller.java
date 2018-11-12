@@ -145,6 +145,7 @@ public class Controller {
     	final ObservableList<Item> data = FXCollections.observableArrayList();
 
     	for (Item item : result) {
+
     		// for console
     		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
     		
@@ -173,6 +174,7 @@ public class Controller {
 
     		try {
 	    		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	    		System.out.println(item.getDate());
 	    		Date this_date = formatter1.parse(item.getDate());
 	    		Date min_date = formatter1.parse(late_date);
 	    		if(min_date.compareTo(this_date) > 0) {
