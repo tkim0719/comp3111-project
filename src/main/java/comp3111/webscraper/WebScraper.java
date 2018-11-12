@@ -15,7 +15,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import javafx.event.ActionEvent;
 
 import java.util.Vector;
-
+import java.util.Comparator;;
 
 /**
  * WebScraper provide a sample code that scrape web content. After it is constructed, you can call the method scrape with a keyword, 
@@ -74,6 +74,8 @@ import java.util.Vector;
 public class WebScraper {
 
 	private static final String DEFAULT_URL = "https://newyork.craigslist.org/";
+	private static final String NEW_URL = "https://hk.carousell.com";
+	//private static final String NEW_URL = "https://preloved.co.uk/";
 	private WebClient client;
 
 	/**
@@ -91,14 +93,21 @@ public class WebScraper {
 	 * @param keyword - the keyword you want to search
 	 * @return A list of Item that has found. A zero size list is return if nothing is found. Null if any exception (e.g. no connectivity)
 	 */
+	
 	public List<Item> scrape(String keyword) {
 
 		try {
 			String searchUrl = DEFAULT_URL + "search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
 			HtmlPage page = client.getPage(searchUrl);
 			
-			List<?> items = (List<?>) page.getByXPath("//li[@class='result-row']");	
+			String searchUrl2 = NEW_URL + "/search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
+			HtmlPage page2 = client.getPage(searchUrl2);
+			
+			List<?> items = (List<?>) page.getByXPath("//li[@class='result-row']");
+			List<?> items2 = (List<?>) page2.getByXPath("//div[@class='col-lg-3 col-md-4 col-sm-4 col-xs-6']");
+
 			Vector<Item> result = new Vector<Item>();
+			Vector<Item> result2 = new Vector<Item>();
 
 			for (int i = 0; i < items.size(); i++) {
 				HtmlElement htmlItem = (HtmlElement) items.get(i);
@@ -113,22 +122,44 @@ public class WebScraper {
 				String postDate = spanDate.getAttribute("datetime");
 				String Url = DEFAULT_URL + itemAnchor.getHrefAttribute();
 				String Portal = "";
-				
-				boolean isCraigslist = Url.indexOf("craigslist") != -1? true: false;
-				boolean isCarousell = Url.indexOf("carousell") != -1? true: false;
-				
-				if (isCraigslist == true)  Portal = "craigslist";
-				if (isCarousell == true)  Portal = "carousell";
 
 				Item item = new Item();
 				item.setTitle(itemAnchor.asText());
 				item.setUrl(Url);
 				item.setPrice(new Double(itemPrice.replace("$", "")));
 				item.setDate(postDate);
-				item.setPortal(Portal);
+				item.setPortal("Craiglist");
 				
 				result.add(item);
 			}
+			for (int i = 0; i < items2.size(); i++) {
+				HtmlElement htmlItem = (HtmlElement) items2.get(i);
+				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='G-Y']"));
+				HtmlElement itemName = ((HtmlElement) htmlItem.getFirstByXPath(".//div[@class='G-m']"));
+				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//div[@class='G-k']//div[1]"));
+				
+				// It is possible that an item doesn't have any price, we set the price to 0.0
+				// in this case
+				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
+				
+				Item item = new Item();
+				item.setTitle(itemName.asText());
+				
+				item.setUrl(NEW_URL + itemAnchor.getHrefAttribute());
+				Double x = new Double(itemPrice.replace("HK$", "").replace(",", ""));
+				
+				x = x*0.128;	//change currency to USD
+				
+				item.setPrice(x);
+				item.setPortal("Carousell");
+				
+				result2.add(item);
+			}
+			
+			result.sort(Comparator.comparing(Item::getPrice));
+			result2.sort(Comparator.comparing(Item::getPrice));
+			merge(result,result2);
+			
 			client.close();
 			return result;
 			
@@ -137,5 +168,56 @@ public class WebScraper {
 		}
 		return null;
 	}
+	public List<Item> newScrape(String keyword) {
 
+		try {
+			String searchUrl2 = NEW_URL + "search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
+			HtmlPage page2 = client.getPage(searchUrl2);
+
+			
+			List<?> items2 = (List<?>) page2.getByXPath("//div[@class='col-lg-3 col-md-4 col-sm-4 col-xs-6']");
+			System.out.println(items2.size());
+			
+			Vector<Item> result2 = new Vector<Item>();
+
+			for (int i = 0; i < items2.size(); i++) {
+				HtmlElement htmlItem = (HtmlElement) items2.get(i);
+				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='G-Y']"));
+				HtmlElement itemName = ((HtmlElement) htmlItem.getFirstByXPath(".//div[@class='G-m']"));
+				
+				System.out.println(itemName.asText());
+				
+				
+				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//div[@class='G-k']//div[1]"));
+				
+				System.out.println("Price is"+spanPrice.asText());
+				
+				// It is possible that an item doesn't have any price, we set the price to 0.0
+				// in this case
+				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
+				
+				Item item = new Item();
+				item.setTitle(itemName.asText());
+				item.setUrl(NEW_URL + itemAnchor.getHrefAttribute());
+				
+				item.setPrice(new Double(itemPrice.replace("HK$", "").replace(",", "")));
+				
+				item.setPortal("Carousell");
+				result2.add(item);
+			}
+			result2.sort(Comparator.comparing(Item::getPrice));
+			client.close();
+			return result2;
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return null;
+	}
+	public static void merge(List<Item> l1, List<Item> l2) {
+	    for (int index1 = 0, index2 = 0; index2 < l2.size(); index1++) {
+	        if (index1 == l1.size() || l1.get(index1).getPrice() > l2.get(index2).getPrice()) {
+	            l1.add(index1, l2.get(index2++));
+	        }
+	    }
+	}  
 }

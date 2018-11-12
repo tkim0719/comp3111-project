@@ -115,6 +115,7 @@ public class Controller {
 		
     	System.out.println("actionSearch: " + textFieldKeyword.getText());
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
+    	System.out.println("Additional website chosen is Carousell");
     	String output = "";
     	
     	// task 1 - dhleeab 

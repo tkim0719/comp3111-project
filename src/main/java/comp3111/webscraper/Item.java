@@ -40,5 +40,4 @@ public class Item {
 	public void setPortal(String portal) {
 		this.portal = portal;
 	}
-
 }
