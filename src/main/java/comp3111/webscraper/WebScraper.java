@@ -95,7 +95,7 @@ public class WebScraper {
 	public List<Item> scrape(String keyword) {
 
 		try {
-			String searchUrl = DEFAULT_URL + "search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
+			String searchUrl = DEFAULT_URL + "/search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
 			HtmlPage page = client.getPage(searchUrl);
 			
 			String searchUrl2 = NEW_URL + "/search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
@@ -120,7 +120,7 @@ public class WebScraper {
 				// in this case
 				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
 				String postDate = spanDate.getAttribute("datetime");
-				String Url = DEFAULT_URL + itemAnchor.getHrefAttribute();
+				String Url = itemAnchor.getHrefAttribute();
 
 				Item item = new Item();
 				item.setTitle(itemAnchor.asText());
@@ -177,7 +177,7 @@ public class WebScraper {
 					if (ago_date.indexOf(" day") != -1) {
 						days = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" day")));
 						real_postDate.add(Calendar.DATE, -1 * days);
-					}					
+					}	
 					if (ago_date.indexOf(" month") != -1) {
 						months = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" month")));
 						real_postDate.add(Calendar.MONTH, -1 * months);
