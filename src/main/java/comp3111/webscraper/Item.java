@@ -8,7 +8,7 @@ public class Item {
 	private double price ;
 	private Hyperlink url = new Hyperlink();
 	private String date ;
-	private String portal ;
+	private String portal;
 	
 	public String getTitle() {
 		return title;
@@ -40,4 +40,14 @@ public class Item {
 	public void setPortal(String portal) {
 		this.portal = portal;
 	}
+//	public Item clone(){
+//		Item p = new Item();
+//		p.title = this.title;
+//		p.price = this.price;
+//		p.url = this.url;
+//		p.date = this.date;
+//		p.portal = this.portal;
+//		
+//		return p;
+//	}
 }

@@ -9,15 +9,20 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Button;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.stage.Stage;
+import javafx.application.Platform;
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -78,10 +83,14 @@ public class Controller {
     @FXML
     private Button goButton;
     
+    @FXML
+    private MenuItem revertButton;
+    
     
     private WebScraper scraper;
-    private List<Item> prev_result;    
-    
+    private List<Item> prev_result;  
+    private List<Item> reverting_result;
+    private Boolean first_item = true;
     
     /**
      * Default controller
@@ -112,6 +121,7 @@ public class Controller {
     public void actionSearch(ActionEvent event) {
 		// disable refine button
 		refineButton.setDisable(false);
+		revertButton.setDisable(false);
 		
     	System.out.println("actionSearch: " + textFieldKeyword.getText());
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
@@ -188,8 +198,15 @@ public class Controller {
     		// for table 
     		data.add(item);
     	}
-    	// for refine search
-    	prev_result = result;
+    	
+    	// for refine search and revert
+    	if(first_item) {
+    		prev_result = result;
+    		first_item = false;
+    	} else {
+    		reverting_result = prev_result;
+    		prev_result = result;
+    	}
     	
     	// for console
     	textAreaConsole.setText(output);
@@ -344,23 +361,128 @@ public class Controller {
      * Called when the new button is pressed. Very dummy action - print something in the command prompt.
      */
 	// task 6 - dhleeab
+	// add revering button disable
     @FXML
     private void actionNew() {
-    	//disable the menu item 
-    	System.out.println("actionNew");
+		refineButton.setDisable(true);
+		revertButton.setDisable(true);
+		
+		System.out.println("previous Search");
+    	
+    	int size = reverting_result.size();
+    	double min = -1;
+    	String latest_url = "-"; 
+    	String late_date = "-"; 
+    	if(size != 0) {
+    		for(int i = 0; i < size; i++) {
+    			if (i == 0) {
+    				latest_url = reverting_result.get(0).getUrl().getText();
+    				late_date = reverting_result.get(0).getDate();
+    			}
+    			if(reverting_result.get(i).getPrice() != 0) {
+    				min = reverting_result.get(i).getPrice();
+    				break;
+    			}
+    		}
+    	} else {
+	    	labelCount.setText("0");
+    		labelMin.setText("-");
+    		labelPrice.setText("-");
+    		labelLatest.setText("-");
+    	}
+    	
+    	String min_url = "-";
+    	double avg_price = 0.0;
+    	int numOfItems = 0;
+
+		String output = "";
+		final ObservableList<Item> data = FXCollections.observableArrayList();
+    	
+    	for (Item item : reverting_result) {
+    		// for console
+    		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
+    		
+    		// for summary
+    		if(item.getPrice() != 0) {
+    			avg_price += item.getPrice();
+    			numOfItems++;
+    		}
+
+    		if(min > item.getPrice() && item.getPrice() != 0) {
+    			min = item.getPrice();
+    			min_url = item.getUrl().getText();
+    		}
+    		
+    		EventHandler<ActionEvent> hyperlinkHandler_refine = new EventHandler<ActionEvent>() {
+    		    public void handle(ActionEvent event) {
+    		    	try {
+    					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());
+    				} catch (IOException | URISyntaxException e) {
+    					e.printStackTrace();
+    				}
+    		    }
+    		};
+    		
+    		try {
+	    		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	    		Date this_date = formatter1.parse(item.getDate());
+	    		Date min_date = formatter1.parse(late_date);
+	    		if(min_date.compareTo(this_date) > 0) {
+	    			late_date = item.getDate();
+	    			latest_url = item.getUrl().getText();
+	    		}
+    		} catch(ParseException e) {
+    			e.printStackTrace();
+    		}
+    		
+    		item.getUrl().setOnAction(hyperlinkHandler_refine);
+    		
+    		// for table 
+    		data.add(item);
+    	}
+    	// for console
+    	textAreaConsole.setText(output);
+    	
+    	// for table
+    	tableView.setItems(data);
+    	
+    	// for summary
+    	if(size != 0) {
+	    	labelCount.setText(String.valueOf(size));
+	    	if (avg_price == 0) {
+	    		labelPrice.setText("$ " + Double.toString(0.0));
+	    	}
+	    	else {
+	    		labelPrice.setText("$ " + Double.toString(avg_price/numOfItems));
+	    	}
+	    	labelMin.setText(min_url);
+	    	labelLatest.setText(latest_url);
+    	}
+    	
+    	first_item = true;
+    	reverting_result = null;
     }
     
     @FXML
     private void actionClose() {
-//    	WebScraperApplication.main(new String[] {});
 //    	System.out.println("actionClose");
+//    	primaryStage.close();
+//    	Platform.runLater( () -> new ReloadApp().start( new Stage() ) );
+    	
+//    	WebScraperApplication app = new WebScraperApplication();	
+//    	try {
+//			app.start(null);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+    	
     }
     
     @FXML
     private void actionQuit() {
-    	//Window stage = node.getScene().getWindow();
-    	//stage.hide();
-    	System.out.println("actionQuit");
+    	System.exit(0);
+        Platform.exit();
     }
     
     @FXML
@@ -368,9 +490,10 @@ public class Controller {
     	Alert alert = new Alert(AlertType.INFORMATION);
     	alert.setTitle("Sudo Korean Introduction");
     	alert.setHeaderText("Team Information");
-    	alert.setContentText("KIM, Tae Woo/ KIM, MinKyung/ LEE, Do Hyun\n"
-    			+ "/mkimaj@connect.ust.hk/ dhleeab@connect.ust.hk"
-    			+ "tkimae/ mkimaj/ dhleeab");
+    	alert.setContentText("KIM, Tae Woo/ tkimae@connect.ust.hk/ tkimae \n"
+    			+ "KIM, MinKyung/ mkimaj@connect.ust.hk/ mkimaj \n"
+    			+ "LEE, Do Hyun/ dhleeab@connect.ust.hk/ dhleeab "
+    			);
 
     	alert.showAndWait();
     }
