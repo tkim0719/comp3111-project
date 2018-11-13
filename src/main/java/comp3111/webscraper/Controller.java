@@ -92,6 +92,7 @@ public class Controller {
     private List<Item> reverting_result;
     private Boolean first_item = true;
     
+    
     /**
      * Default controller
      */
@@ -111,8 +112,6 @@ public class Controller {
 		tURL.setCellValueFactory(new PropertyValueFactory<>("url"));
 		tDate.setCellValueFactory(new PropertyValueFactory<>("date"));
     }
-    
-    
     
     /**
      * Called when the search button is pressed.
@@ -360,7 +359,6 @@ public class Controller {
      * Called when the new button is pressed. Very dummy action - print something in the command prompt.
      */
 	// task 6 - dhleeab
-	// add revering button disable
     @FXML
     private void actionNew() {
 		refineButton.setDisable(true);
@@ -464,18 +462,32 @@ public class Controller {
     
     @FXML
     private void actionClose() {
-//    	System.out.println("actionClose");
-//    	primaryStage.close();
-//    	Platform.runLater( () -> new ReloadApp().start( new Stage() ) );
+    
+    	refineButton.setDisable(true);
+    	revertButton.setDisable(true);
+    	if(prev_result != null) {
+    		prev_result.clear();
+    	}
+    	if(reverting_result != null) {
+    		reverting_result.clear();
+    	}
+    	first_item = true;
     	
-//    	WebScraperApplication app = new WebScraperApplication();	
-//    	try {
-//			app.start(null);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+    	String output = "";
     	
+    	// summary 
+	    labelCount.setText("<total>");
+    	labelMin.setText("<AvgPrice>");
+   		labelPrice.setText("<Lowest>");
+   		labelLatest.setText("<Latest>");
+    
+    	final ObservableList<Item> data = FXCollections.observableArrayList();
+
+    	// for console
+    	textAreaConsole.setText(output);
+    	
+    	// for table
+    	tableView.setItems(data);
     }
     
     @FXML

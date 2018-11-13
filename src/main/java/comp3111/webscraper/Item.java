@@ -10,6 +10,10 @@ public class Item {
 	private String date ;
 	private String portal;
 	
+	public void Item() {
+		
+	}
+	
 	public String getTitle() {
 		return title;
 	}
