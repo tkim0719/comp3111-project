@@ -184,7 +184,6 @@ public class Controller {
 
     		try {
 	    		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-	    		System.out.println(item.getDate());
 	    		Date this_date = formatter1.parse(item.getDate());
 	    		Date min_date = formatter1.parse(late_date);
 	    		if(min_date.compareTo(this_date) > 0) {
@@ -193,7 +192,7 @@ public class Controller {
 	    		}
     		} catch(ParseException e) {
     			e.printStackTrace();
-    		}    		
+    		}
 
     		// for table 
     		data.add(item);
