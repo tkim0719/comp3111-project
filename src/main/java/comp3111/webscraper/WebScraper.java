@@ -171,6 +171,7 @@ public class WebScraper {
 			String CalculatedPostDate = "";
 			
 			List<?> items2 = (List<?>) page2.getByXPath("//div[@class='col-lg-3 col-md-4 col-sm-4 col-xs-6']");
+			System.out.println(items2.size());
 			Vector<Item> result2 = new Vector<Item>();
 
 			for (int i = 0; i < items2.size(); i++) {
@@ -179,11 +180,18 @@ public class WebScraper {
 				System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(real_postDate.getTime()));
 
 				HtmlElement htmlItem = (HtmlElement) items2.get(i);
+<<<<<<< HEAD
 				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='G-Y']"));
 				HtmlElement itemName = ((HtmlElement) htmlItem.getFirstByXPath(".//div[@class='G-m']"));
 				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//div[@class='G-k']//div[1]"));
 				HtmlElement spanDate = ((HtmlElement) htmlItem.getFirstByXPath(".//time[@class='G-u']"));
 
+=======
+				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='_-Y']"));
+				HtmlElement itemName = ((HtmlElement) htmlItem.getFirstByXPath(".//div[@class='_-m']"));
+				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//div[@class='_-k']//div[1]"));
+				HtmlElement spanDate = ((HtmlElement) htmlItem.getFirstByXPath(".//time[@class='_-u']"));
+>>>>>>> d1a852863bfac57fd08bd4497e844424639eb762
 				String postDate = spanDate.asText();
 
 				if (postDate.indexOf(" ago") != -1) {
@@ -197,6 +205,7 @@ public class WebScraper {
 					int weeks = 0;
 					int months = 0;
 					int years = 0;
+					
 					
 					if (ago_date.indexOf(" second") != -1) {
 						seconds = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" second")));
@@ -214,6 +223,7 @@ public class WebScraper {
 						days = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" day")));
 						real_postDate.add(Calendar.DATE, -1 * days);
 					}
+<<<<<<< HEAD
 					if (ago_date.indexOf(" yesterday") != -1) {
 						days = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" day")));
 						real_postDate.add(Calendar.DATE, -1);
@@ -223,8 +233,26 @@ public class WebScraper {
 						real_postDate.add(Calendar.DATE, -7);
 					}
 					if (ago_date.indexOf(" week") != -1) {
+=======
+					if(ago_date.indexOf(" yesterday") != -1)
+					{
+						days = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" day")));
+						real_postDate.add(Calendar.DATE, -1);
+					}
+					if(ago_date.indexOf(" last week") != -1)
+					{
+>>>>>>> d1a852863bfac57fd08bd4497e844424639eb762
 						days = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" weeks")));
-						real_postDate.add(Calendar.DATE, -7 * days);
+						real_postDate.add(Calendar.DATE, -7);
+					}
+					if (ago_date.indexOf(" weeks") != -1) {
+						weeks = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" weeks")));
+						real_postDate.add(Calendar.DATE, -7 * weeks);
+					}
+					if (ago_date.indexOf(" last month") != -1)
+					{
+						months = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" month")));
+						real_postDate.add(Calendar.MONTH, -1);
 					}
 					if (ago_date.indexOf(" last month") != -1) {
 						months = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" month")));
@@ -267,7 +295,6 @@ public class WebScraper {
 				
 				result2.add(item);
 			}
-			System.out.println(result2.size());
 			result2.sort(Comparator.comparing(Item::getPrice));
 			//client.close();
 
