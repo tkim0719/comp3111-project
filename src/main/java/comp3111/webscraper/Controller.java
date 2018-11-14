@@ -43,7 +43,9 @@ import java.text.ParseException;
  * 
  */
 public class Controller {
-
+	
+	// Summary /////////////////////////////////////////
+	
     @FXML 
     private Label labelCount; 
 
@@ -55,12 +57,30 @@ public class Controller {
 
     @FXML 
     private Hyperlink labelLatest; 
+    
+    
+    // Search ///////////////////////////////////////////
 
     @FXML
     private TextField textFieldKeyword;
     
     @FXML
+    private Button refineButton;
+    
+    @FXML
+    private Button goButton;
+    
+    @FXML
+    private MenuItem revertButton;
+    
+    
+    // Console //////////////////////////////////////////
+    
+    @FXML
     private TextArea textAreaConsole;
+    
+    
+    // Table ////////////////////////////////////////////
     
     @FXML
     private TableView<Item> tableView;
@@ -76,21 +96,13 @@ public class Controller {
     
     @FXML
     private TableColumn<Item, String> tDate;
-    
-    @FXML
-    private Button refineButton;
-    
-    @FXML
-    private Button goButton;
-    
-    @FXML
-    private MenuItem revertButton;
-    
+
     
     private WebScraper scraper;
     private List<Item> prev_result;  
     private List<Item> reverting_result;
-    private Boolean first_item = true;
+    private Boolean first_item = true;	// to distinguish which result should be used for revert & refine
+    
     
     
     /**
@@ -100,36 +112,66 @@ public class Controller {
     	scraper = new WebScraper();
     }
     
-    
 
     /**
      * Default initializer. It is empty.
      */
     @FXML
     private void initialize() {
+    	
+    	// Initialize the table columns in the Table tab
     	tTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
 		tPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 		tURL.setCellValueFactory(new PropertyValueFactory<>("url"));
 		tDate.setCellValueFactory(new PropertyValueFactory<>("date"));
+		
     }
+    
+    
+    public String findMinPrice(List<Item> result) {
+    	
+    }
+    
+    
+    public String findAvgPrice(List<Item> result) {
+    	
+    }
+    
+    
+    public String findLatest(List<Item> result) {
+    	
+    }
+    
     
     /**
      * Called when the search button is pressed.
      */
 	@FXML
     public void actionSearch(ActionEvent event) {
+		
 		// disable refine & revert button when Go button is clicked
 		refineButton.setDisable(false);
 		revertButton.setDisable(false);
 		
     	System.out.println("actionSearch: " + textFieldKeyword.getText());
+    	
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
-    	System.out.println("Additional website chosen is Carousell");
     	String output = "";
     	
-    	// task 1 - dhleeab 
+    	System.out.println("Additional website chosen is Carousell");
+    	
+    	
+    	// ## TASK 1 - dhleeab ## ///////////////////////////////////////////////////////////////
+    	
+    	double min = 1;	// by setting the initial min as 1 to handle the zero division
+    	int numOfItems = 0; 
+    	double avg_price = 0.0;
     	int size = result.size();
-    	double min = 1;
+    	
+    	String min_url = "-";
+    	String latest_url = result.get(0).getUrl().getText();
+    	String late_date = result.get(0).getDate();
+    	
     	if (size != 0) {
     		for(int i = 0; i < size; i++) {
     			if(result.get(i).getPrice() != 0) {
@@ -138,20 +180,20 @@ public class Controller {
     			}
     		}
     	} else {
+    		
+    		// Initialization of the data on the Summary Tab
 	    	labelCount.setText("0");
     		labelMin.setText("-");
     		labelPrice.setText("-");
     		labelLatest.setText("-");
+    		
     	}
     	
-    	String min_url = "-";
-    	String latest_url = result.get(0).getUrl().getText();
-    	double avg_price = 0.0;
-    	int numOfItems = 0; 
-    	String late_date = result.get(0).getDate();
     	
-		// task 4 - mkimaj
-    	final ObservableList<Item> data = FXCollections.observableArrayList();
+    	// ## TASK 4 - mkimaj ## ///////////////////////////////////////////////////////////////
+    	
+    	final ObservableList<Item> data = FXCollections.observableArrayList();	// Initialize ObservaleList used for
+    																			// inserting data into the table in the Table tab
 
     	for (Item item : result) {
 
