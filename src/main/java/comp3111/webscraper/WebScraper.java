@@ -169,6 +169,7 @@ public class WebScraper {
 		}
 		return null;
 	}
+	//scrape data from additional website called preloved
 	public List<Item> CAscrape(String keyword) {
 
 		try {
@@ -190,6 +191,7 @@ public class WebScraper {
 
 				Item item = new Item();
 				item.setTitle(itemName.asText());
+				//since date is not available on website, set it as 9999-99-99 99:99
 				item.setDate("9999-99-99 99:99");
 				item.setUrl(itemAnchor.getHrefAttribute());
 
@@ -211,12 +213,13 @@ public class WebScraper {
 		}
 		return null;
 	}
+	//scrape on two websites by keyword
 	public List<Item> scrape(String keyword) {
 		client.close();
 		return merge(Cscrape(keyword),CAscrape(keyword));
 		 
 	}
-
+	//merge and sort by price from two lists
 	public List<Item> merge(List<Item> l1, List<Item> l2) {
 	    for (int index1 = 0, index2 = 0; index2 < l2.size(); index1++) {
 	        if (index1 == l1.size() || l1.get(index1).getPrice() > l2.get(index2).getPrice()) {
