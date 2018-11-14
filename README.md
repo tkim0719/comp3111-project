@@ -1,8 +1,4 @@
-# Group name: #6-sudo kroean
-
-
-# COMP3111: Software Engineering Project - Webscrapper
-
+# Group name: #6-sudo korean
 
 | KIM, Tae Woo(tkimae) 20213873  | Basic 2 | Basic 3 |
 
