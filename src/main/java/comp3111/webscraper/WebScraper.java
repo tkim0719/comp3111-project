@@ -73,7 +73,7 @@ import java.util.Date;;
 public class WebScraper {
 
 	private static final String DEFAULT_URL = "https://newyork.craigslist.org/";
-	private static final String NEW_URL = "https://hk.carousell.com";
+	private static final String NEW_URL = "https://www.preloved.co.uk/";
 	private WebClient client;
 
 	/**
@@ -91,7 +91,9 @@ public class WebScraper {
 		
 		try {
 			String searchUrl = DEFAULT_URL + "search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
+			System.out.println(searchUrl);
 			HtmlPage page = client.getPage(searchUrl);
+
 			//String searchUrl2 = NEW_URL + "/search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
 			//HtmlPage page2 = client.getPage(searchUrl2);
 			List<?> items = (List<?>) page.getByXPath("//li[@class='result-row']");
@@ -165,12 +167,12 @@ public class WebScraper {
 	public List<Item> CAscrape(String keyword) {
 
 		try {
-			String searchUrl2 = NEW_URL + "/search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
+			String searchUrl2 = NEW_URL + "search?keyword=" + URLEncoder.encode(keyword, "UTF-8");
 			HtmlPage page2 = client.getPage(searchUrl2);
 			Calendar real_postDate;
 			String CalculatedPostDate = "";
 			
-			List<?> items2 = (List<?>) page2.getByXPath("//div[@class='col-lg-3 col-md-4 col-sm-4 col-xs-6']");
+			List<?> items2 = (List<?>) page2.getByXPath("/li[@data-test-element='search-result']");
 			System.out.println(items2.size());
 			Vector<Item> result2 = new Vector<Item>();
 
@@ -178,11 +180,11 @@ public class WebScraper {
 				real_postDate = Calendar.getInstance();
 				System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(real_postDate.getTime()));
 				HtmlElement htmlItem = (HtmlElement) items2.get(i);
-				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='_-Y']"));
-				HtmlElement itemName = ((HtmlElement) htmlItem.getFirstByXPath(".//div[@class='_-m']"));
-				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//div[@class='_-k']//div[1]"));
-				HtmlElement spanDate = ((HtmlElement) htmlItem.getFirstByXPath(".//time[@class='_-u']"));
-				String postDate = spanDate.asText();
+				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//span[@itemprop='name']"));
+				HtmlElement itemName = ((HtmlElement) htmlItem.getFirstByXPath(".//span[@itemprop='name']"));
+				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath("./header[@class = 'search-result__header']/h2/a"));
+				//HtmlElement spanDate = ((HtmlElement) htmlItem.getFirstByXPath(".//time[@class='A-u']"));
+				/*String postDate = spanDate.asText();
 				if (postDate.indexOf(" ago") != -1) {
 					String ago_date = postDate.substring(0, postDate.indexOf(" ago"));
 					System.out.println(ago_date);
@@ -245,16 +247,17 @@ public class WebScraper {
 					}
 					
 				}
-				
-				CalculatedPostDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(real_postDate.getTime());
-				System.out.println(CalculatedPostDate+"\n");
+				*/
+				//CalculatedPostDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(real_postDate.getTime());
+				//System.out.println(CalculatedPostDate+"\n");
 				// It is possible that an item doesn't have any price, we set the price to 0.0
 				// in this case
 				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
 				Item item = new Item();
 				item.setTitle(itemName.asText());
-				item.setUrl(NEW_URL + itemAnchor.getHrefAttribute());
-				Double x = new Double(itemPrice.replace("HK$", "").replace(",", ""));
+				item.setUrl(itemAnchor.getHrefAttribute());
+				item.setDate(null);
+				Double x = new Double(itemPrice.replace("£$", ""));
 				x = x*0.128;//convert HK$ to US $
 				item.setPrice(x);
 				//item.setPrice(new Double(itemPrice.replace("HK$", "").replace(",", "")));
