@@ -71,6 +71,7 @@ import java.util.Comparator;
 public class WebScraper {
 
 	private static final String DEFAULT_URL = "https://newyork.craigslist.org/";
+	//URL of additional website being scraped
 	private static final String NEW_URL = "https://www.preloved.co.uk";
 	private WebClient client;
 
@@ -90,17 +91,15 @@ public class WebScraper {
 		try {
 			String searchUrl = DEFAULT_URL + "/search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
 			HtmlPage page = client.getPage(searchUrl);
-
-			//String searchUrl2 = NEW_URL + "/search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
-			//HtmlPage page2 = client.getPage(searchUrl2);
 			List<?> items = (List<?>) page.getByXPath("//li[@class='result-row']");
 
 			//Determining last page pN
 			HtmlElement it = (HtmlElement) items.get(1);
+			//fectch the total count of the page for search result
 			HtmlElement pageNum = ((HtmlElement) it.getFirstByXPath("//span[@class='totalcount']"));
 			String pageNum1 = pageNum.asText();
-			
 			int pageNum2 = Integer.parseInt(pageNum1);
+			//Calculate the total number of page
 			int pN;
 			if(pageNum2<120)
 			{
@@ -121,6 +120,7 @@ public class WebScraper {
 			//////////////////////////
 			for(int i=0;i<pN;i++)
 			{
+				//to show that programming is still running, print statement in command-line console while scraping 
 				System.out.println("Number of Craiglist page scraped so far is "+(i+1)+"/"+pN);
 				String extra = "";
 				if(i==0)
@@ -134,7 +134,6 @@ public class WebScraper {
 				String searchUrlM = DEFAULT_URL + "search/sss?"+extra+"sort=rel&query="+ URLEncoder.encode(keyword, "UTF-8");
 				HtmlPage pageM = client.getPage(searchUrlM);
 				List<?> itemsM = (List<?>) pageM.getByXPath("//li[@class='result-row']");
-				//Vector<Item> result2 = new Vector<Item>();
 				for (int j = 0; j < itemsM.size();j++) {
 					HtmlElement htmlItem = (HtmlElement) itemsM.get(j);
 					HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//p[@class='result-info']/a"));
@@ -144,7 +143,7 @@ public class WebScraper {
 					// It is possible that an item doesn't have any price, we set the price to 0.0
 					// in this case
 					String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
-					String postDate = spanDate.getAttribute("datetime");
+					String postDate = spanDate.getAttribute("datetime");		//to set the date
 
 					Item item = new Item();
 					item.setTitle(itemAnchor.asText());
@@ -169,7 +168,8 @@ public class WebScraper {
 		}
 		return null;
 	}
-	//scrape data from additional website called preloved
+	//Task 2 
+	//scrape data from additional website called "preloved"
 	public List<Item> CAscrape(String keyword) {
 
 		try {
