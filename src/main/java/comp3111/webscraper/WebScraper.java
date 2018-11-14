@@ -71,7 +71,7 @@ import java.util.Comparator;
 public class WebScraper {
 
 	private static final String DEFAULT_URL = "https://newyork.craigslist.org/";
-	private static final String NEW_URL = "https://hk.carousell.com";
+	private static final String NEW_URL = "https://www.preloved.co.uk";
 	private WebClient client;
 
 	/**
@@ -94,10 +94,12 @@ public class WebScraper {
 			//String searchUrl2 = NEW_URL + "/search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
 			//HtmlPage page2 = client.getPage(searchUrl2);
 			List<?> items = (List<?>) page.getByXPath("//li[@class='result-row']");
+
 			//Determining last page pN
 			HtmlElement it = (HtmlElement) items.get(1);
 			HtmlElement pageNum = ((HtmlElement) it.getFirstByXPath("//span[@class='totalcount']"));
 			String pageNum1 = pageNum.asText();
+			
 			int pageNum2 = Integer.parseInt(pageNum1);
 			int pN;
 			if(pageNum2<120)
@@ -114,6 +116,9 @@ public class WebScraper {
 			}			
 			//List<?> items2 = (List<?>) page2.getByXPath("//div[@class='col-lg-3 col-md-4 col-sm-4 col-xs-6']");
 			Vector<Item> result = new Vector<Item>();
+			//////////////////////////////
+			pN=1;
+			//////////////////////////
 			for(int i=0;i<pN;i++)
 			{
 				System.out.println("Number of Craiglist page scraped so far is "+(i+1)+"/"+pN);
@@ -145,7 +150,9 @@ public class WebScraper {
 					item.setTitle(itemAnchor.asText());
 					item.setUrl(itemAnchor.getHrefAttribute());
 	
-					item.setPrice(new Double(itemPrice.replace("$", "")));
+					Double x = new Double(itemPrice.replace("$", ""));
+					x = x * 7.8;		// US $ to HK $
+					item.setPrice(x);
 					item.setPortal("Craiglist");
 					item.setDate(postDate);
 					result.add(item);
@@ -165,105 +172,31 @@ public class WebScraper {
 	public List<Item> CAscrape(String keyword) {
 
 		try {
-			String searchUrl2 = NEW_URL + "/search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
+			String searchUrl2 = NEW_URL + "/search?keyword=" + URLEncoder.encode(keyword, "UTF-8");
 			HtmlPage page2 = client.getPage(searchUrl2);
-			Calendar real_postDate;
-			String CalculatedPostDate = "";
 			
-			List<?> items2 = (List<?>) page2.getByXPath("//div[@class='col-lg-3 col-md-4 col-sm-4 col-xs-6']");
+			List<?> items2 = (List<?>) page2.getByXPath("//li[@class='search-result']");
 			Vector<Item> result2 = new Vector<Item>();
 
 			for (int i = 0; i < items2.size(); i++) {
-
-				real_postDate = Calendar.getInstance();
-				System.out.println(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(real_postDate.getTime()));
-
+				
 				HtmlElement htmlItem = (HtmlElement) items2.get(i);
-				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//a[@class='G-Y']"));
-				HtmlElement itemName = ((HtmlElement) htmlItem.getFirstByXPath(".//div[@class='G-m']"));
-				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//div[@class='G-k']//div[1]"));
-				HtmlElement spanDate = ((HtmlElement) htmlItem.getFirstByXPath(".//time[@class='G-u']"));
-
-				String postDate = spanDate.asText();
-
-				if (postDate.indexOf(" ago") != -1) {
-					String ago_date = postDate.substring(0, postDate.indexOf(" ago"));
-					System.out.println(ago_date);
-					
-					int seconds = 0;
-					int minutes = 0;
-					int hours = 0;
-					int days = 0;
-					int weeks = 0;
-					int months = 0;
-					int years = 0;
-					
-					if (ago_date.indexOf(" second") != -1) {
-						seconds = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" second")));
-						real_postDate.add(Calendar.SECOND, -1 * seconds);
-					}
-					if (ago_date.indexOf(" minute") != -1) {
-						minutes = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" minute")));
-						real_postDate.add(Calendar.MINUTE, -1 * minutes);
-					}
-					if (ago_date.indexOf(" hour") != -1) {
-						hours = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" hour")));
-						real_postDate.add(Calendar.HOUR, -1 * hours);
-					}
-					if (ago_date.indexOf(" day") != -1) {
-						days = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" day")));
-						real_postDate.add(Calendar.DATE, -1 * days);
-					}
-					if (ago_date.indexOf(" yesterday") != -1) {
-						days = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" day")));
-						real_postDate.add(Calendar.DATE, -1);
-					}
-					if (ago_date.indexOf(" last week") != -1) {
-						days = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" weeks")));
-						real_postDate.add(Calendar.DATE, -7);
-					}
-					if (ago_date.indexOf(" week") != -1) {
-						days = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" weeks")));
-						real_postDate.add(Calendar.DATE, -7 * days);
-					}
-					if (ago_date.indexOf(" last month") != -1) {
-						months = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" month")));
-						real_postDate.add(Calendar.MONTH, -1);
-					}
-					if (ago_date.indexOf(" month") != -1) {
-						months = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" month")));
-						real_postDate.add(Calendar.MONTH, -1 * months);
-					}
-					if (ago_date.indexOf(" last year") != -1) {
-						years = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" year")));
-						real_postDate.add(Calendar.YEAR, -1);
-					}
-					if (ago_date.indexOf(" year") != -1) {
-						years = Integer.parseInt(ago_date.substring(0, ago_date.indexOf(" year")));
-						real_postDate.add(Calendar.YEAR, -1 * years);
-					}
-					
-				}
 				
-				CalculatedPostDate = new SimpleDateFormat("yyyy-MM-dd HH:mm").format(real_postDate.getTime());
-				System.out.println(CalculatedPostDate+"\n");
+				HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//div[@class='search-result__content']/header/h2/a"));
+				HtmlElement itemName = ((HtmlElement) htmlItem.getFirstByXPath(".//span[@itemprop='name']"));
+				HtmlElement spanPrice = ((HtmlElement) htmlItem.getFirstByXPath(".//span[@itemprop='price']"));
 				
-				// It is possible that an item doesn't have any price, we set the price to 0.0
-				// in this case
 				String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
 
 				Item item = new Item();
 				item.setTitle(itemName.asText());
-				item.setDate(CalculatedPostDate);
-				item.setUrl(NEW_URL + itemAnchor.getHrefAttribute());
+				item.setDate("9999-99-99 99:99");
+				item.setUrl(itemAnchor.getHrefAttribute());
 
-				Double x = new Double(itemPrice.replace("HK$", "").replace(",", ""));
-				x = x*0.128;//convert HK$ to US $
+				Double x = new Double(itemPrice.replace("£", "").replace(",", ""));
+				x = x * 10.17;		// convert £ to HK $
 				item.setPrice(x);
-				//item.setPrice(new Double(itemPrice.replace("HK$", "").replace(",", "")));
-				item.setDate(CalculatedPostDate);
-
-				item.setPortal("Carousell");
+				item.setPortal("Preloved");
 				
 				result2.add(item);
 			}

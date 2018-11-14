@@ -118,7 +118,7 @@ public class Controller {
      */
 	@FXML
     public void actionSearch(ActionEvent event) {
-		// disable refine button
+		// disable refine & revert button when Go button is clicked
 		refineButton.setDisable(false);
 		revertButton.setDisable(false);
 		
@@ -129,8 +129,8 @@ public class Controller {
     	
     	// task 1 - dhleeab 
     	int size = result.size();
-    	double min = -1;
-    	if(size != 0) {
+    	double min = 1;
+    	if (size != 0) {
     		for(int i = 0; i < size; i++) {
     			if(result.get(i).getPrice() != 0) {
     				min = result.get(i).getPrice();

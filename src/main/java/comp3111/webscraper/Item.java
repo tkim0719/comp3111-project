@@ -8,10 +8,9 @@ public class Item {
 	private double price ;
 	private Hyperlink url = new Hyperlink();
 	private String date ;
-	private String portal;
+	private String portal ;
 	
 	public void Item() {
-		
 	}
 	
 	public String getTitle() {
