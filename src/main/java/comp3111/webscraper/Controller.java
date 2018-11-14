@@ -10,18 +10,19 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Button;
+import javafx.scene.control.SelectionModel;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.stage.Stage;
 import javafx.application.Platform;
 
 import java.awt.Desktop;
@@ -43,6 +44,8 @@ import java.text.ParseException;
  * 
  */
 public class Controller {
+	@FXML
+	private Tab consoleTab;
 	
 	// Summary /////////////////////////////////////////
 	
@@ -127,21 +130,66 @@ public class Controller {
 		
     }
     
+	// for summary task 1 min price url- dhleeab
+    public String findMinPrice(List<Item> result) {
+     	double min = 1;	// by setting the initial min as 1 to handle the zero division
+    	int size = result.size();
+    	String min_url = "-";
+    	
+    	for(int i = 0; i < size; i++) {
+			if(result.get(i).getPrice() != 0) {
+				min = result.get(i).getPrice();
+				min_url = result.get(i).getUrl().getText();
+				break;
+			}
+    	}
+    	
+    	for (Item item : result) {
+       		if(min > item.getPrice() && item.getPrice() != 0) {
+    			min = item.getPrice();
+    			min_url = item.getUrl().getText();
+    		}
+    	}
+    	
+    	return min_url;
+    }
     
-//    public String findMinPrice(List<Item> result) {
-//    	
-//    }
-//    
-//    
-//    public String findAvgPrice(List<Item> result) {
-//    	
-//    }
-//    
-//    
-//    public String findLatest(List<Item> result) {
-//    	
-//    }
+	// for summary task 1 average price - dhleeab
+    public double findAvgPrice(List<Item> result) {
+    	int numOfItems = 0; 
+    	double aggregatePrice = 0.0;
+    	
+    	for (Item item : result) {
+    		if(item.getPrice() != 0) {
+    			aggregatePrice += item.getPrice();
+    			numOfItems++;
+    		}
+    	}
+    	
+    	return aggregatePrice == 0.0 ? 0.0 : aggregatePrice/numOfItems;
+    }
     
+	// for summary task 1 latest url - dhleeab
+    public String findLatest(List<Item> result) {
+    	String latest_url = result.get(0).getUrl().getText();
+    	String late_date = result.get(0).getDate();
+    	
+    	for(Item item : result) {
+	    	try {
+	    		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	    		Date this_date = formatter1.parse(item.getDate());
+	    		Date min_date = formatter1.parse(late_date);
+	    		if(min_date.compareTo(this_date) > 0) {
+	    			late_date = item.getDate();
+	    			latest_url = item.getUrl().getText();
+	    		}
+			} catch(ParseException e) {
+				e.printStackTrace();
+			} 	
+    	}
+    	
+    	return latest_url;
+    }
     
     /**
      * Called when the search button is pressed.
@@ -160,73 +208,49 @@ public class Controller {
     	
     	System.out.println("Additional website chosen is Preloved");
     	
+    	// TASK 1 - dhleeab
+    	int size = result == null ? 0 : result.size();
     	
-    	// ## TASK 1 - dhleeab ## ///////////////////////////////////////////////////////////////
-    	
-    	double min = 1;	// by setting the initial min as 1 to handle the zero division
-    	int numOfItems = 0; 
-    	double avg_price = 0.0;
-    	int size = result.size();
-    	
-    	String min_url = "-";
-    	String latest_url = result.get(0).getUrl().getText();
-    	String late_date = result.get(0).getDate();
-    	
+    	// for summary
     	if (size != 0) {
-    		for(int i = 0; i < size; i++) {
-    			if(result.get(i).getPrice() != 0) {
-    				min = result.get(i).getPrice();
-    				break;
-    			}
-    		}
-    	} else {
-    		
-    		// Initialization of the data on the Summary Tab
+    		labelCount.setText(String.valueOf(size));
+    		labelMin.setText(findMinPrice(result));
+    		labelPrice.setText("$" + Double.toString(findAvgPrice(result)));
+    		labelLatest.setText(findLatest(result));
+    	} else {	
+    		// Initialization of the data on the Summary Tab if there is no data 
 	    	labelCount.setText("0");
     		labelMin.setText("-");
     		labelPrice.setText("-");
-    		labelLatest.setText("-");
-    		
+    		labelLatest.setText("-");	
     	}
     	
     	// ## TASK 4 - mkimaj ## ///////////////////////////////////////////////////////////////
     	
     	final ObservableList<Item> data = FXCollections.observableArrayList();	// Initialize ObservaleList used for
     																			// inserting data into the table in the Table tab
-
-    	for (Item item : result) {
-
-    		// for console output
-    		output += item.getTitle() + "\tHK$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
-    		
-    		
-    		// find min price
-    		
-    		
-    		// find avg price
-    		
-    		
-    		// find latest post date 
-    		
-    		
-    		// EventHandler for click action on the URL in the table cell
-    		EventHandler<ActionEvent> hyperlinkHandler_action = new EventHandler<ActionEvent>() {
-    		    public void handle(ActionEvent event) {
-    		    	try {
-    					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());	// open the browser for given url
-    				} catch (IOException | URISyntaxException e) {
-    					e.printStackTrace();
-    				}
-    		    }
-    		};
-    		
-    		// put EventHandler on the url attribute for item
-    		item.getUrl().setOnAction(hyperlinkHandler_action);
-    		
-    		// add item into ObservableList
-    		data.add(item);
+    	if (size != 0) {
+	    	for (Item item : result) {
+	
+	    		// for console output
+	    		output += item.getTitle() + "\tHK$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
+	    		
+	    		// EventHandler for click action on the URL in the table cell
+	    		EventHandler<ActionEvent> hyperlinkHandler_action = new EventHandler<ActionEvent>() {
+	    		    public void handle(ActionEvent event) {
+	    		    	try {
+	    					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());	// open the browser for given url
+	    				} catch (IOException | URISyntaxException e) {
+	    					e.printStackTrace();
+	    				}
+	    		    }
+	    		};
+	    		
+	    		// put EventHandler on the url attribute for item
+	    		item.getUrl().setOnAction(hyperlinkHandler_action);
+	    		data.add(item);
+	    	}
     	}
-    	
     	// for recalling result list for refine search and revert
     	if(first_item) {
     		prev_result = result;
@@ -242,20 +266,6 @@ public class Controller {
     	// insert item in the table as a single row
     	tableView.setItems(data);
     	
-    	// for summary
-    	if(size != 0) {
-    		// number of the scraped data
-	    	labelCount.setText(String.valueOf(size));
-	    	
-	    	// average price for the search
-	    	
-	    	
-    		// lowest price for the search
-	    	labelMin.setText(min_url);
-	    	
-	    	// latest post for the search
-	    	labelLatest.setText(latest_url);
-    	}
     }
     
 	/**
@@ -284,71 +294,51 @@ public class Controller {
     		if (TitleContains == true) { refinedResult.add(item); }
     	}
     	
+     	// TASK 1 - dhleeab
+    	int size = refinedResult == null ? 0 : refinedResult.size();
     	
-    	// ## TASK 1 - dhleeab ## ///////////////////////////////////////////////////////////////
-    	
-    	double min = 1;	// by setting the initial min as 1 to handle the zero division
-    	int numOfItems = 0; 
-    	double avg_price = 0.0;
-    	int size = refinedResult.size();
-    	
-    	String min_url = "-";
-    	String latest_url = refinedResult.get(0).getUrl().getText();
-    	String late_date = refinedResult.get(0).getDate();
-    	
+    	// for summary
     	if (size != 0) {
-    		for(int i = 0; i < size; i++) {
-    			if(refinedResult.get(i).getPrice() != 0) {
-    				min = refinedResult.get(i).getPrice();
-    				break;
-    			}
-    		}
-    	} else {
-    		
-    		// Initialization of the data on the Summary Tab
+    		labelCount.setText(String.valueOf(size));
+    		labelMin.setText(findMinPrice(refinedResult));
+    		labelPrice.setText("$" + Double.toString(findAvgPrice(refinedResult)));
+    		labelLatest.setText(findLatest(refinedResult));
+    	} else {	
+    		// Initialization of the data on the Summary Tab if there is no data 
 	    	labelCount.setText("0");
     		labelMin.setText("-");
     		labelPrice.setText("-");
-    		labelLatest.setText("-");
-    		
+    		labelLatest.setText("-");	
     	}
+
     	
    		final ObservableList<Item> data = FXCollections.observableArrayList();
-    	
-   		for (Item item : refinedResult) {
-
-    		// for console output
-    		output += item.getTitle() + "\tHK$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
-    		
-    		
-    		// find min price
-    		
-    		
-    		// find avg price
-    		
-    		
-    		// find latest post date 
-    		
-    		
-    		// EventHandler for click action on the URL in the table cell
-    		EventHandler<ActionEvent> hyperlinkHandler_action = new EventHandler<ActionEvent>() {
-    		    public void handle(ActionEvent event) {
-    		    	try {
-    					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());	// open the browser for given url
-    				} catch (IOException | URISyntaxException e) {
-    					e.printStackTrace();
-    				}
-    		    }
-    		};
-    		
-    		// put EventHandler on the url attribute for item
-    		item.getUrl().setOnAction(hyperlinkHandler_action);
-    		
-    		// add item into ObservableList
-    		data.add(item);
+    	if (size != 0) {
+	   		for (Item item : refinedResult) {
+	
+	    		// for console output
+	    		output += item.getTitle() + "\tHK$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
+	    		
+	    		// EventHandler for click action on the URL in the table cell
+	    		EventHandler<ActionEvent> hyperlinkHandler_action = new EventHandler<ActionEvent>() {
+	    		    public void handle(ActionEvent event) {
+	    		    	try {
+	    					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());	// open the browser for given url
+	    				} catch (IOException | URISyntaxException e) {
+	    					e.printStackTrace();
+	    				}
+	    		    }
+	    		};
+	
+	    		// put EventHandler on the url attribute for item
+	    		item.getUrl().setOnAction(hyperlinkHandler_action);
+	    		
+	    		// add item into ObservableList
+	    		data.add(item);
+	    	}
     	}
     	
-    	// for recalling result list for refine search and revert
+    	// for recalling result list for refine search and revert 
     	if(first_item) {
     		prev_result = refinedResult;
     		first_item = false;
@@ -362,22 +352,7 @@ public class Controller {
     	
     	// insert item in the table as a single row
     	tableView.setItems(data);
-    	
-    	// for summary
-    	if(size != 0) {
-    		// number of the scraped data
-	    	labelCount.setText(String.valueOf(size));
-	    	
-	    	// average price for the search
-	    	
-	    	
-    		// lowest price for the search
-	    	labelMin.setText(min_url);
-	    	
-	    	// latest post for the search
-	    	labelLatest.setText(latest_url);
-    	}
-    }
+	}
 	
 	// EventHandler for the clicking on the lowest price url in Summary tab
 	public void MinClick(ActionEvent event) {
@@ -412,90 +387,54 @@ public class Controller {
 		System.out.println("Reverting to previous Search");
 		String output = "";
     	
-    	double min = -1;
-    	int numOfItems = 0;
-    	double avg_price = 0.0;
-    	int size = reverting_result.size();
-    	
-    	String min_url = "-";
-    	String latest_url = "-"; 
-    	String late_date = "-";
-    	
-    	if(size != 0) {
-    		for(int i = 0; i < size; i++) {
-    			if (i == 0) {
-    				latest_url = reverting_result.get(0).getUrl().getText();
-    				late_date = reverting_result.get(0).getDate();
-    			}
-    			if(reverting_result.get(i).getPrice() != 0) {
-    				min = reverting_result.get(i).getPrice();
-    				break;
-    			}
-    		}
-    	} else {
+    	int size = reverting_result == null ? 0 : reverting_result.size(); 	
+    	// for summary
+    	if (size != 0) {
+    		labelCount.setText(String.valueOf(size));
+    		labelMin.setText(findMinPrice(reverting_result));
+    		labelPrice.setText("$" + Double.toString(findAvgPrice(reverting_result)));
+    		labelLatest.setText(findLatest(reverting_result));
+    	} else {	
+    		// Initialization of the data on the Summary Tab if there is no data 
 	    	labelCount.setText("0");
     		labelMin.setText("-");
     		labelPrice.setText("-");
-    		labelLatest.setText("-");
+    		labelLatest.setText("-");	
     	}
-		
+
 		final ObservableList<Item> data = FXCollections.observableArrayList();
     	
-    	for (Item item : reverting_result) {
-    		
-    		// for console output
-    		output += item.getTitle() + "\tHK$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
-    		
-    		
-    		// find min price
-    		
-    		
-    		// find avg price
-    		
-    		
-    		// find latest post date 
-    		
-    		
-    		// EventHandler for click action on the URL in the table cell
-    		EventHandler<ActionEvent> hyperlinkHandler_action = new EventHandler<ActionEvent>() {
-    		    public void handle(ActionEvent event) {
-    		    	try {
-    					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());	// open the browser for given url
-    				} catch (IOException | URISyntaxException e) {
-    					e.printStackTrace();
-    				}
-    		    }
-    		};
-    		
-    		// put EventHandler on the url attribute for item
-    		item.getUrl().setOnAction(hyperlinkHandler_action);
-    		
-    		// add item into ObservableList
-    		data.add(item);
-    	}
-    	
+		if(size != 0) {
+	    	for (Item item : reverting_result) {
+	    		
+	    		// for console output
+	    		output += item.getTitle() + "\tHK$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
+	    		
+	    		// EventHandler for click action on the URL in the table cell
+	    		EventHandler<ActionEvent> hyperlinkHandler_action = new EventHandler<ActionEvent>() {
+	    		    public void handle(ActionEvent event) {
+	    		    	try {
+	    					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());	// open the browser for given url
+	    				} catch (IOException | URISyntaxException e) {
+	    					e.printStackTrace();
+	    				}
+	    		    }
+	    		};
+	    		
+	    		// put EventHandler on the url attribute for item
+	    		item.getUrl().setOnAction(hyperlinkHandler_action);    		
+	    		// add item into ObservableList
+	    		data.add(item);
+	    	}	
+		}
     	// for console output
     	textAreaConsole.setText(output);
     	
     	// insert item in the table as a single row
     	tableView.setItems(data);
-    	
-    	// for summary
-    	if(size != 0) {
-    		// number of the scraped data
-	    	labelCount.setText(String.valueOf(size));
-	    	
-	    	// average price for the search
-	    	
-	    	
-    		// lowest price for the search
-	    	labelMin.setText(min_url);
-	    	
-	    	// latest post for the search
-	    	labelLatest.setText(latest_url);
-    	}
-    	
+
     	first_item = true;
+    	
     	reverting_result = null;
     }
     
@@ -504,6 +443,10 @@ public class Controller {
     
     	refineButton.setDisable(true);
     	revertButton.setDisable(true);
+		textFieldKeyword.setText("");
+		TabPane tabPane = new TabPane();
+		tabPane.getSelectionModel().select(consoleTab);
+
     	if(prev_result != null) {
     		prev_result.clear();
     	}
@@ -516,10 +459,12 @@ public class Controller {
     	
     	// summary 
 	    labelCount.setText("<total>");
-    	labelMin.setText("<AvgPrice>");
-   		labelPrice.setText("<Lowest>");
+    	labelMin.setText("<Lowest>");
+   		labelPrice.setText("<AvgPrice>");
    		labelLatest.setText("<Latest>");
-    
+   		labelMin.setVisited(false);
+   		labelLatest.setVisited(false);
+
     	final ObservableList<Item> data = FXCollections.observableArrayList();
 
     	// for console

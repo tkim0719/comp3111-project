@@ -200,7 +200,6 @@ public class WebScraper {
 				
 				result2.add(item);
 			}
-			System.out.println(result2.size());
 			result2.sort(Comparator.comparing(Item::getPrice));
 			//client.close();
 
