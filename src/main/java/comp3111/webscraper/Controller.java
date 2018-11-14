@@ -128,19 +128,19 @@ public class Controller {
     }
     
     
-    public String findMinPrice(List<Item> result) {
-    	
-    }
-    
-    
-    public String findAvgPrice(List<Item> result) {
-    	
-    }
-    
-    
-    public String findLatest(List<Item> result) {
-    	
-    }
+//    public String findMinPrice(List<Item> result) {
+//    	
+//    }
+//    
+//    
+//    public String findAvgPrice(List<Item> result) {
+//    	
+//    }
+//    
+//    
+//    public String findLatest(List<Item> result) {
+//    	
+//    }
     
     
     /**
