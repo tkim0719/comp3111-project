@@ -9,15 +9,20 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Callback;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Button;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.stage.Stage;
+import javafx.application.Platform;
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -25,7 +30,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.text.SimpleDateFormat;  
+import java.util.Date; 
+import java.text.ParseException;
 
 /**
  * 
@@ -76,9 +83,14 @@ public class Controller {
     @FXML
     private Button goButton;
     
+    @FXML
+    private MenuItem revertButton;
+    
     
     private WebScraper scraper;
-    private List<Item> prev_result;    
+    private List<Item> prev_result;  
+    private List<Item> reverting_result;
+    private Boolean first_item = true;
     
     
     /**
@@ -88,33 +100,7 @@ public class Controller {
     	scraper = new WebScraper();
     }
     
-    public class HyperlinkCell implements  Callback<TableColumn<Item, Hyperlink>, TableCell<Item, Hyperlink>> {
-    	 
-        @Override
-        public TableCell<Item, Hyperlink> call(TableColumn<Item, Hyperlink> arg) {
-            TableCell<Item, Hyperlink> cell = new TableCell<Item, Hyperlink>() {
-                @Override
-                protected void updateItem(Hyperlink url, boolean empty) {
-                    setGraphic(url);
-                    url.setOnAction(new EventHandler<ActionEvent>() {
-                      	 
-                        @Override
-                        public void handle(ActionEvent event) {
-                        	try {
-                    			Desktop.getDesktop().browse(new URL(url.getText()).toURI());
-                    		} catch (IOException | URISyntaxException e) {
-                    			e.printStackTrace();
-                    		}
-                        }
-                    });;
-                    
-                }
-            };
-            
-            
-            return cell;
-        }
-    }
+    
 
     /**
      * Default initializer. It is empty.
@@ -124,11 +110,8 @@ public class Controller {
     	tTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
 		tPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 		tURL.setCellValueFactory(new PropertyValueFactory<>("url"));
-		tURL.setCellFactory(new HyperlinkCell());
 		tDate.setCellValueFactory(new PropertyValueFactory<>("date"));
     }
-    
-    
     
     /**
      * Called when the search button is pressed.
@@ -137,12 +120,14 @@ public class Controller {
     public void actionSearch(ActionEvent event) {
 		// disable refine button
 		refineButton.setDisable(false);
+		revertButton.setDisable(false);
 		
     	System.out.println("actionSearch: " + textFieldKeyword.getText());
     	List<Item> result = scraper.scrape(textFieldKeyword.getText());
+    	System.out.println("Additional website chosen is Carousell");
     	String output = "";
     	
-    	// dhleeab
+    	// task 1 - dhleeab 
     	int size = result.size();
     	double min = -1;
     	if(size != 0) {
@@ -163,15 +148,17 @@ public class Controller {
     	String latest_url = result.get(0).getUrl().getText();
     	double avg_price = 0.0;
     	int numOfItems = 0; 
+    	String late_date = result.get(0).getDate();
     	
 		// task 4 - mkimaj
     	final ObservableList<Item> data = FXCollections.observableArrayList();
 
     	for (Item item : result) {
+
     		// for console
-    		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\t" + item.getDate() + "\n";
+    		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
     		
-    		// for summary
+    		// for summary task 1 - dhleeab
     		if(item.getPrice() != 0) {
     			avg_price += item.getPrice();
     			numOfItems++;
@@ -182,11 +169,42 @@ public class Controller {
     			min_url = item.getUrl().getText();
     		}
     		
+    		EventHandler<ActionEvent> hyperlinkHandler_action = new EventHandler<ActionEvent>() {
+    		    public void handle(ActionEvent event) {
+    		    	try {
+    					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());
+    				} catch (IOException | URISyntaxException e) {
+    					e.printStackTrace();
+    				}
+    		    }
+    		};
+    		
+    		item.getUrl().setOnAction(hyperlinkHandler_action);
+
+    		try {
+	    		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	    		Date this_date = formatter1.parse(item.getDate());
+	    		Date min_date = formatter1.parse(late_date);
+	    		if(min_date.compareTo(this_date) > 0) {
+	    			late_date = item.getDate();
+	    			latest_url = item.getUrl().getText();
+	    		}
+    		} catch(ParseException e) {
+    			e.printStackTrace();
+    		}
+
     		// for table 
     		data.add(item);
     	}
-    	// for refine search
-    	prev_result = result;
+    	
+    	// for refine search and revert
+    	if(first_item) {
+    		prev_result = result;
+    		first_item = false;
+    	} else {
+    		reverting_result = prev_result;
+    		prev_result = result;
+    	}
     	
     	// for console
     	textAreaConsole.setText(output);
@@ -220,21 +238,23 @@ public class Controller {
 		
 		String keyword = textFieldKeyword.getText();
 		System.out.println("refineSearch: " + keyword);
-		final List<Item> refinedResult = new ArrayList();
+		final List<Item> refinedResult = new ArrayList<Item> ();
 
     	for (Item item : prev_result) {
     		boolean TitleContains = item.getTitle().toLowerCase().indexOf(keyword) != -1? true: false;
     		if (TitleContains == true) { refinedResult.add(item); }
     	}
     	
-    	// dhleeab
+    	// task 1 - dhleeab
     	int size = refinedResult.size();
     	double min = -1;
     	String latest_url = "-"; // refineResult.get(0) gets error don't know why so I changed this part @dhleeab
+    	String late_date = "-"; 
     	if(size != 0) {
     		for(int i = 0; i < size; i++) {
     			if (i == 0) {
     				latest_url = refinedResult.get(0).getUrl().getText();
+    				late_date = refinedResult.get(0).getDate();
     			}
     			if(refinedResult.get(i).getPrice() != 0) {
     				min = refinedResult.get(i).getPrice();
@@ -250,14 +270,14 @@ public class Controller {
     	
     	String min_url = "-";
     	double avg_price = 0.0;
-    	int numOfItems = 0; 
+    	int numOfItems = 0;
 
 		String output = "";
 		final ObservableList<Item> data = FXCollections.observableArrayList();
     	
     	for (Item item : refinedResult) {
     		// for console
-    		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl() + "\t" + item.getDate() + "\n";
+    		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
     		
     		// for summary
     		if(item.getPrice() != 0) {
@@ -269,6 +289,30 @@ public class Controller {
     			min = item.getPrice();
     			min_url = item.getUrl().getText();
     		}
+    		
+    		EventHandler<ActionEvent> hyperlinkHandler_refine = new EventHandler<ActionEvent>() {
+    		    public void handle(ActionEvent event) {
+    		    	try {
+    					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());
+    				} catch (IOException | URISyntaxException e) {
+    					e.printStackTrace();
+    				}
+    		    }
+    		};
+    		
+    		try {
+	    		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	    		Date this_date = formatter1.parse(item.getDate());
+	    		Date min_date = formatter1.parse(late_date);
+	    		if(min_date.compareTo(this_date) > 0) {
+	    			late_date = item.getDate();
+	    			latest_url = item.getUrl().getText();
+	    		}
+    		} catch(ParseException e) {
+    			e.printStackTrace();
+    		}
+    		
+    		item.getUrl().setOnAction(hyperlinkHandler_refine);
     		
     		// for table 
     		data.add(item);
@@ -314,9 +358,155 @@ public class Controller {
     /**
      * Called when the new button is pressed. Very dummy action - print something in the command prompt.
      */
+	// task 6 - dhleeab
     @FXML
     private void actionNew() {
-    	System.out.println("actionNew");
+		refineButton.setDisable(true);
+		revertButton.setDisable(true);
+		
+		System.out.println("previous Search");
+    	
+    	int size = reverting_result.size();
+    	double min = -1;
+    	String latest_url = "-"; 
+    	String late_date = "-"; 
+    	if(size != 0) {
+    		for(int i = 0; i < size; i++) {
+    			if (i == 0) {
+    				latest_url = reverting_result.get(0).getUrl().getText();
+    				late_date = reverting_result.get(0).getDate();
+    			}
+    			if(reverting_result.get(i).getPrice() != 0) {
+    				min = reverting_result.get(i).getPrice();
+    				break;
+    			}
+    		}
+    	} else {
+	    	labelCount.setText("0");
+    		labelMin.setText("-");
+    		labelPrice.setText("-");
+    		labelLatest.setText("-");
+    	}
+    	
+    	String min_url = "-";
+    	double avg_price = 0.0;
+    	int numOfItems = 0;
+
+		String output = "";
+		final ObservableList<Item> data = FXCollections.observableArrayList();
+    	
+    	for (Item item : reverting_result) {
+    		// for console
+    		output += item.getTitle() + "\t$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
+    		
+    		// for summary
+    		if(item.getPrice() != 0) {
+    			avg_price += item.getPrice();
+    			numOfItems++;
+    		}
+
+    		if(min > item.getPrice() && item.getPrice() != 0) {
+    			min = item.getPrice();
+    			min_url = item.getUrl().getText();
+    		}
+    		
+    		EventHandler<ActionEvent> hyperlinkHandler_refine = new EventHandler<ActionEvent>() {
+    		    public void handle(ActionEvent event) {
+    		    	try {
+    					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());
+    				} catch (IOException | URISyntaxException e) {
+    					e.printStackTrace();
+    				}
+    		    }
+    		};
+    		
+    		try {
+	    		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	    		Date this_date = formatter1.parse(item.getDate());
+	    		Date min_date = formatter1.parse(late_date);
+	    		if(min_date.compareTo(this_date) > 0) {
+	    			late_date = item.getDate();
+	    			latest_url = item.getUrl().getText();
+	    		}
+    		} catch(ParseException e) {
+    			e.printStackTrace();
+    		}
+    		
+    		item.getUrl().setOnAction(hyperlinkHandler_refine);
+    		
+    		// for table 
+    		data.add(item);
+    	}
+    	// for console
+    	textAreaConsole.setText(output);
+    	
+    	// for table
+    	tableView.setItems(data);
+    	
+    	// for summary
+    	if(size != 0) {
+	    	labelCount.setText(String.valueOf(size));
+	    	if (avg_price == 0) {
+	    		labelPrice.setText("$ " + Double.toString(0.0));
+	    	}
+	    	else {
+	    		labelPrice.setText("$ " + Double.toString(avg_price/numOfItems));
+	    	}
+	    	labelMin.setText(min_url);
+	    	labelLatest.setText(latest_url);
+    	}
+    	
+    	first_item = true;
+    	reverting_result = null;
+    }
+    
+    @FXML
+    private void actionClose() {
+    
+    	refineButton.setDisable(true);
+    	revertButton.setDisable(true);
+    	if(prev_result != null) {
+    		prev_result.clear();
+    	}
+    	if(reverting_result != null) {
+    		reverting_result.clear();
+    	}
+    	first_item = true;
+    	
+    	String output = "";
+    	
+    	// summary 
+	    labelCount.setText("<total>");
+    	labelMin.setText("<AvgPrice>");
+   		labelPrice.setText("<Lowest>");
+   		labelLatest.setText("<Latest>");
+    
+    	final ObservableList<Item> data = FXCollections.observableArrayList();
+
+    	// for console
+    	textAreaConsole.setText(output);
+    	
+    	// for table
+    	tableView.setItems(data);
+    }
+    
+    @FXML
+    private void actionQuit() {
+    	System.exit(0);
+        Platform.exit();
+    }
+    
+    @FXML
+    private void actionAboutTeam() {
+    	Alert alert = new Alert(AlertType.INFORMATION);
+    	alert.setTitle("Sudo Korean Introduction");
+    	alert.setHeaderText("Team Information");
+    	alert.setContentText("KIM, Tae Woo/ tkimae@connect.ust.hk/ tkimae \n"
+    			+ "KIM, MinKyung/ mkimaj@connect.ust.hk/ mkimaj \n"
+    			+ "LEE, Do Hyun/ dhleeab@connect.ust.hk/ dhleeab "
+    			);
+
+    	alert.showAndWait();
     }
 }
 
