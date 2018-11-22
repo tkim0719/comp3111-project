@@ -1,11 +1,36 @@
 package comp3111.webscraper;
 
+
 import org.junit.Test;
+
+import javafx.application.Application;
+
+import org.junit.BeforeClass;
+
 import static org.junit.Assert.*;
 
 
-public class ItemTest {
 
+public class ItemTest {
+	
+	
+	// Initialise Java FX
+	
+	@BeforeClass
+	public static void setUpClass() throws InterruptedException {
+	   
+	    Thread t = new Thread("JavaFX Init Thread") {
+	        public void run() {
+	            Application.launch(WebScraperApplication.class, new String[0]);
+	        }
+	    };
+	    t.setDaemon(true);
+	    t.start();
+	    System.out.printf("FX App thread started\n");
+	    Thread.sleep(500);
+	}
+	
+	
 	@Test
 	public void testSetTitle() {
 		Item i = new Item();
@@ -21,12 +46,12 @@ public class ItemTest {
 		assertEquals(price, i.getPrice(), 0.0);
 	}
 	
-//	@Test
-//	public void testSetUrl() {
-//		Item i = new Item();
-//		i.setUrl("https://newyork.craigslist.org/");
-//		assertEquals(i.getUrl().getText(), "https://newyork.craigslist.org/");
-//	}
+	@Test
+	public void testSetUrl() {
+		Item i = new Item();
+		i.setUrl("https://newyork.craigslist.org/");
+		assertEquals(i.getUrl().getText(), "https://newyork.craigslist.org/");
+	}
 	
 	@Test
 	public void testSetDate() {

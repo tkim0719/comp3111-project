@@ -6,11 +6,11 @@ import javafx.scene.control.Hyperlink;
 public class Item {
 	private String title ;
 	private double price ;
-	private Hyperlink url ;
+	private Hyperlink url = new Hyperlink();
 	private String date ;
 	private String portal ;
 	
-	public Item() {		
+	public Item() {
 		
 	}
 	
@@ -29,8 +29,6 @@ public class Item {
 	}
 	
 	public void setUrl(String url) {
-		Hyperlink link = new Hyperlink("http://www.google.com/");
-		this.url = link;
 		this.url.setText(url);
 	}
 	public Hyperlink getUrl() {
