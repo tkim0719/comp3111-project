@@ -190,7 +190,7 @@ public class WebScraper {
 
 				Item item = new Item();
 				item.setTitle(itemName.asText());
-				item.setDate("9999-99-99 99:99");
+				item.setDate("0001-01-01 00:00");
 				item.setUrl(itemAnchor.getHrefAttribute());
 
 				Double x = new Double(itemPrice.replace("£", "").replace(",", ""));

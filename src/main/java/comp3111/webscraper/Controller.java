@@ -10,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
@@ -22,6 +23,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.application.Platform;
+import javafx.scene.control.TabPane;
 
 import java.awt.Desktop;
 import java.io.IOException;
@@ -43,8 +45,10 @@ import java.text.ParseException;
  */
 public class Controller {
 	@FXML
-	private Tab consoleTab;
+	private TabPane tabPane;
 	
+	@FXML
+	private Tab consoleTab;
 	// Summary /////////////////////////////////////////
 	
     @FXML 
@@ -80,7 +84,6 @@ public class Controller {
     @FXML
     private TextArea textAreaConsole;
     
-    
     // Table ////////////////////////////////////////////
     
     @FXML
@@ -113,6 +116,16 @@ public class Controller {
     	scraper = new WebScraper();
     }
     
+    /**
+     * getter for unit test
+     */
+    public String getLabelCount() {
+    	return labelCount.getText();
+    }
+    
+    public Boolean getRefine() {
+    	return refineButton.isDisabled();
+    }
 
     /**
      * Default initializer. It is empty.
@@ -129,7 +142,7 @@ public class Controller {
     }
     
 	// for summary task 1 min price url- dhleeab
-    public String findMinPrice(List<Item> result) {
+    public static String findMinPrice(List<Item> result) {
      	double min = 1;	// by setting the initial min as 1 to handle the zero division
     	int size = result.size();
     	String min_url = "-";
@@ -153,7 +166,7 @@ public class Controller {
     }
     
 	// for summary task 1 average price - dhleeab
-    public double findAvgPrice(List<Item> result) {
+    public static double findAvgPrice(List<Item> result) {
     	int numOfItems = 0; 
     	double aggregatePrice = 0.0;
     	
@@ -168,7 +181,7 @@ public class Controller {
     }
     
 	// for summary task 1 latest url - dhleeab
-    public String findLatest(List<Item> result) {
+    public static String findLatest(List<Item> result) {
     	String latest_url = result.get(0).getUrl().getText();
     	String late_date = result.get(0).getDate();
     	
@@ -177,7 +190,7 @@ public class Controller {
 	    		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	    		Date this_date = formatter1.parse(item.getDate());
 	    		Date min_date = formatter1.parse(late_date);
-	    		if(min_date.compareTo(this_date) > 0) {
+	    		if(min_date.compareTo(this_date) < 0) {
 	    			late_date = item.getDate();
 	    			latest_url = item.getUrl().getText();
 	    		}
@@ -185,7 +198,7 @@ public class Controller {
 				e.printStackTrace();
 			} 	
     	}
-    	
+		
     	return latest_url;
     }
     
@@ -249,6 +262,7 @@ public class Controller {
 	    		data.add(item);
 	    	}
     	}
+
     	// for recalling result list for refine search and revert
     	if(first_item) {
     		prev_result = result;
@@ -378,7 +392,7 @@ public class Controller {
 	// ## TASK 6 - dhleeab ## ///////////////////////////////////////////////////////////////
 	
     @FXML
-    private void actionNew() {
+    public void actionNew() {
 		refineButton.setDisable(true);
 		revertButton.setDisable(true);
 		
@@ -442,9 +456,10 @@ public class Controller {
     	refineButton.setDisable(true);
     	revertButton.setDisable(true);
 		textFieldKeyword.setText("");
-		TabPane tabPane = new TabPane();
-		tabPane.getSelectionModel().select(consoleTab);
-
+		//TabPane tabPane = new TabPane();
+		SingleSelectionModel<Tab> selectionModel =tabPane.getSelectionModel();
+		selectionModel.select(consoleTab);
+		
     	if(prev_result != null) {
     		prev_result.clear();
     	}
