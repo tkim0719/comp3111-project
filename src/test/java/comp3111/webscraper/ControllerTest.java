@@ -2,12 +2,19 @@ package comp3111.webscraper;
 
 
 import org.junit.Test;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,12 +36,13 @@ public class ControllerTest {
 	        }
 	    };
 	    t.start();
+	    
 	    System.out.printf("FX App thread started\n");
 	    Thread.sleep(500);
 	}
 
 	@Test
-	public void testMinPrice() {
+	public void testMinPrice_1() {
 		List<Item> result = new ArrayList<Item>();
 		
 		Item a = new Item();
@@ -76,7 +84,7 @@ public class ControllerTest {
 	}
 	
 	@Test
-	public void testAvgPrice() {
+	public void testAvgPrice_1() {
 		List<Item> list = new ArrayList<Item>();
 		
 		Item a = new Item();
@@ -89,6 +97,7 @@ public class ControllerTest {
 		list.add(a);
 		list.add(b);
 		list.add(c);
+		
 		assertEquals(0, Double.compare(Controller.findAvgPrice(list), 20.0));
 	}
 	
@@ -106,12 +115,13 @@ public class ControllerTest {
 		list.add(a);
 		list.add(b);
 		list.add(c);
+		
 		assertEquals(0, Double.compare(Controller.findAvgPrice(list), 0.0));
 	}
 
 	
 	@Test
-	public void testLatest() {
+	public void testLatest_1() {
 		List<Item> result = new ArrayList<Item>();
 		
 		Item a = new Item();
@@ -148,14 +158,46 @@ public class ControllerTest {
 		Controller a = new Controller();
 		ActionEvent mockEvent = new ActionEvent();
 		a.actionSearch(mockEvent);
-		assertNotNull(a.getLabelCount());
+		Assert.assertNotNull(a.getLabelCount());
+	}
+	
+	@Test
+	public void testRefineSearch() {
+		Controller a = new Controller();
+		ActionEvent mockEvent = new ActionEvent();
+		a.actionSearch(mockEvent);
+		a.refineSearch(mockEvent);
+		Assert.assertNotNull(a.getLabelCount());
+	}
+	
+	@Test
+	public void testMinClick() throws IOException {
+		Controller a = new Controller();
+		ActionEvent mockEvent = new ActionEvent();
+		a.setLabelMin();
+		a.MinClick(mockEvent);
+	}
+	
+	@Test
+	public void testLatestClick() throws IOException {
+		Controller a = new Controller();
+		ActionEvent mockEvent = new ActionEvent();
+		a.setLabelLatest();
+		a.LatestClick(mockEvent);
 	}
 	
 	@Test
 	public void testActionNew() {
 		Controller a = new Controller();
 		a.actionNew();
-		//assertTrue("This will succeed", a.getRefine());
-		assertTrue("true", true);
+		assertTrue("This will succeed", a.getRefine());
 	}
+	
+	@Test
+	public void testActionClose() {
+		Controller a = new Controller();
+		a.actionClose();
+		assertEquals("", a.getTextField());
+	}
+	
 }
