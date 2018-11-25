@@ -89,51 +89,34 @@ public class WebScraper {
 
 		
 		try {
-			String searchUrl = DEFAULT_URL + "/search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
-			HtmlPage page = client.getPage(searchUrl);
-			List<?> items = (List<?>) page.getByXPath("//li[@class='result-row']");
-
-			//Determining last page pN
-			HtmlElement it = (HtmlElement) items.get(1);
-			//fectch the total count of the page for search result
-			HtmlElement pageNum = ((HtmlElement) it.getFirstByXPath("//span[@class='totalcount']"));
-			String pageNum1 = pageNum.asText();
-			int pageNum2 = Integer.parseInt(pageNum1);
-			//Calculate the total number of page
-			int pN;
-			if(pageNum2<120)
-			{
-				pN = 1;
-			}
-			else if(pageNum2%120!=0)
-			{
-				pN = (pageNum2/120) +1;
-			}
-			else
-			{
-				pN = pageNum2/120;
-			}			
-			//List<?> items2 = (List<?>) page2.getByXPath("//div[@class='col-lg-3 col-md-4 col-sm-4 col-xs-6']");
+			//String searchUrl = DEFAULT_URL + "/search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
+			//HtmlPage page = client.getPage(searchUrl);
+			//List<?> items = (List<?>) page.getByXPath("//li[@class='result-row']");
 			Vector<Item> result = new Vector<Item>();
-			//////////////////////////////
+			int pN;
+			
 			pN=1;
-			//////////////////////////
-			for(int i=0;i<pN;i++)
+			String searchUrl = "";
+			String searchUrl2 = "/search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
+			while(searchUrl2.startsWith("/"))
 			{
+				searchUrl = DEFAULT_URL + searchUrl2;
 				//to show that programming is still running, print statement in command-line console while scraping 
-				System.out.println("Number of Craiglist page scraped so far is "+(i+1)+"/"+pN);
-				String extra = "";
-				if(i==0)
-				{
-					extra = "";
-				}
-				else
-				{
-					extra = "s=" + Integer.toString(i*120)+"&";
-				}
-				String searchUrlM = DEFAULT_URL + "search/sss?"+extra+"sort=rel&query="+ URLEncoder.encode(keyword, "UTF-8");
-				HtmlPage pageM = client.getPage(searchUrlM);
+				
+				
+				
+				HtmlPage pageM = client.getPage(searchUrl);
+				
 				List<?> itemsM = (List<?>) pageM.getByXPath("//li[@class='result-row']");
+				if(itemsM.size()==0)
+				{
+					System.out.println("no item found on page");
+					break;
+				}
+				System.out.println("Number of Craiglist page scraped so far is "+(pN));
+				System.out.println(itemsM.size());
+				HtmlElement pItem = ((HtmlElement) itemsM.get(1));
+				HtmlAnchor itemAnchorP = ((HtmlAnchor) pItem.getFirstByXPath("//span[@class='buttons']/a[3]"));
 				for (int j = 0; j < itemsM.size();j++) {
 					HtmlElement htmlItem = (HtmlElement) itemsM.get(j);
 					HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//p[@class='result-info']/a"));
@@ -156,11 +139,20 @@ public class WebScraper {
 					item.setDate(postDate);
 					result.add(item);
 				}
+				searchUrl2 = itemAnchorP.getHrefAttribute();
+				System.out.println("ddddddddd"+searchUrl2+"SSSSSSSSSSSSSSSS");
+				if(searchUrl2 == null)
+				{
+					System.out.println("yes");
+				}
+				else if(searchUrl2 =="")
+				{
+					System.out.println("yesyes");
+				}
+				pN++;
 
 			}
 			result.sort(Comparator.comparing(Item::getPrice));
-			System.out.println(result.size());
-			//client.close();
 			return result;
 			
 		} catch (Exception e) {
@@ -194,18 +186,24 @@ public class WebScraper {
 				//since date is not available on website, set it as 9999-99-99 99:99
 				item.setDate("9999-99-99 99:99");
 				item.setUrl(itemAnchor.getHrefAttribute());
+				if(itemPrice.contains("£"))
+				{
+					Double x = new Double(itemPrice.replace("£", "").replace(",", ""));
+					x = x * 10.17;		// convert £ to HK $
+					item.setPrice(x);
 
-				Double x = new Double(itemPrice.replace("£", "").replace(",", ""));
-				x = x * 10.17;		// convert £ to HK $
-				item.setPrice(x);
+				}
+				if(itemPrice.contains("€"))
+				{
+					Double x = new Double(itemPrice.replace("€", "").replace(",", ""));
+					x = x * 8.93;		// convert € to HK $
+					item.setPrice(x);
+				}
 				item.setPortal("Preloved");
 				
 				result2.add(item);
 			}
-			System.out.println(result2.size());
 			result2.sort(Comparator.comparing(Item::getPrice));
-			//client.close();
-
 			return result2;
 			
 		} catch (Exception e) {

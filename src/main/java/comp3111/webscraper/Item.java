@@ -43,14 +43,4 @@ public class Item {
 	public void setPortal(String portal) {
 		this.portal = portal;
 	}
-//	public Item clone(){
-//		Item p = new Item();
-//		p.title = this.title;
-//		p.price = this.price;
-//		p.url = this.url;
-//		p.date = this.date;
-//		p.portal = this.portal;
-//		
-//		return p;
-//	}
 }
