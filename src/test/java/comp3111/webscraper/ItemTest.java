@@ -5,10 +5,7 @@ import org.junit.Test;
 import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 
-
 import javafx.application.Application;
-
-
 
 public class ItemTest {
 	
@@ -28,7 +25,7 @@ public class ItemTest {
 	}
 	
 	// Item
-	
+
 	@Test
 	public void testSetTitle() {
 		Item i = new Item();
