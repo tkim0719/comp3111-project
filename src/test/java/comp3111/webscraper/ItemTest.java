@@ -2,12 +2,14 @@ package comp3111.webscraper;
 
 
 import org.junit.Test;
-
-import javafx.application.Application;
-
 import org.junit.BeforeClass;
 
 import static org.junit.Assert.*;
+
+import org.junit.Assert;
+
+import javafx.application.Application;
+import javafx.event.ActionEvent;
 
 
 
@@ -24,7 +26,6 @@ public class ItemTest {
 	            Application.launch(WebScraperApplication.class, new String[0]);
 	        }
 	    };
-	    t.setDaemon(true);
 	    t.start();
 	    System.out.printf("FX App thread started\n");
 	    Thread.sleep(500);
@@ -63,8 +64,28 @@ public class ItemTest {
 	@Test
 	public void testSetPortal() {
 		Item i = new Item();
-		i.setDate("Preloved");
-		assertEquals(i.getDate(), "Preloved");
+		i.setPortal("Preloved");
+		assertEquals(i.getPortal(), "Preloved");
 	}
+	
+	@Test
+	public void testCAscrape() {
+		WebScraper testWebScraper = new WebScraper();
+		Assert.assertFalse(testWebScraper.CAscrape("").isEmpty());
+	}
+	
+	@Test
+	public void testCscrape() {
+		WebScraper testWebScraper = new WebScraper();
+		Assert.assertFalse(testWebScraper.Cscrape("").isEmpty());
+	}
+	
+	
+	@Test
+	public void tesScrape() {
+		WebScraper testWebScraper = new WebScraper();
+		Assert.assertFalse(testWebScraper.scrape("").isEmpty());
+	}
+	
 	
 }

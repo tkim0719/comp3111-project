@@ -49,6 +49,8 @@ public class Controller {
 	
 	@FXML
 	private Tab consoleTab;
+	
+	
 	// Summary /////////////////////////////////////////
 	
     @FXML 
@@ -83,6 +85,7 @@ public class Controller {
     
     @FXML
     private TextArea textAreaConsole;
+    
     
     // Table ////////////////////////////////////////////
     
