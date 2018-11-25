@@ -456,7 +456,6 @@ public class Controller {
     	refineButton.setDisable(true);
     	revertButton.setDisable(true);
 		textFieldKeyword.setText("");
-		//TabPane tabPane = new TabPane();
 		SingleSelectionModel<Tab> selectionModel =tabPane.getSelectionModel();
 		selectionModel.select(consoleTab);
 		
