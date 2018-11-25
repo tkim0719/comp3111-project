@@ -15,7 +15,6 @@ import javafx.event.ActionEvent;
 
 public class ItemTest {
 	
-	
 	// Initialise Java FX
 	
 	@BeforeClass
@@ -31,6 +30,7 @@ public class ItemTest {
 	    Thread.sleep(500);
 	}
 	
+	// Item
 	
 	@Test
 	public void testSetTitle() {
@@ -68,6 +68,8 @@ public class ItemTest {
 		assertEquals(i.getPortal(), "Preloved");
 	}
 	
+	// WebScraper
+	
 	@Test
 	public void testCAscrape() {
 		WebScraper testWebScraper = new WebScraper();
@@ -80,12 +82,14 @@ public class ItemTest {
 		Assert.assertFalse(testWebScraper.Cscrape("").isEmpty());
 	}
 	
-	
 	@Test
 	public void tesScrape() {
 		WebScraper testWebScraper = new WebScraper();
 		Assert.assertFalse(testWebScraper.scrape("").isEmpty());
 	}
+	
+	// Controller
+	
 	
 	
 }
