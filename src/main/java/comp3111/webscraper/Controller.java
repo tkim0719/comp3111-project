@@ -10,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableColumn;
@@ -19,8 +20,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Button;
-import javafx.scene.control.SelectionModel;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.application.Platform;
@@ -44,61 +43,39 @@ import java.text.ParseException;
  * 
  */
 public class Controller {
-	@FXML
-	private Tab consoleTab;
+	
+	@FXML private TabPane tabPane = new TabPane();
+	@FXML private Tab consoleTab = new Tab();
+	
 	
 	// Summary /////////////////////////////////////////
 	
-    @FXML 
-    private Label labelCount; 
-
-    @FXML 
-    private Label labelPrice; 
-
-    @FXML 
-    private Hyperlink labelMin; 
-
-    @FXML 
-    private Hyperlink labelLatest; 
+    @FXML private Label labelCount = new Label(); 
+    @FXML private Label labelPrice = new Label(); 
+    @FXML private Hyperlink labelMin = new Hyperlink(); 
+    @FXML private Hyperlink labelLatest = new Hyperlink(); 
     
     
     // Search ///////////////////////////////////////////
 
-    @FXML
-    private TextField textFieldKeyword;
-    
-    @FXML
-    private Button refineButton;
-    
-    @FXML
-    private Button goButton;
-    
-    @FXML
-    private MenuItem revertButton;
+    @FXML private TextField textFieldKeyword = new TextField();
+    @FXML private Button refineButton = new Button();
+    @FXML private Button goButton = new Button();
+    @FXML private MenuItem revertButton = new MenuItem();
     
     
     // Console //////////////////////////////////////////
     
-    @FXML
-    private TextArea textAreaConsole;
+    @FXML private TextArea textAreaConsole = new TextArea();
     
     
     // Table ////////////////////////////////////////////
     
-    @FXML
-    private TableView<Item> tableView;
-    
-    @FXML
-    private TableColumn<Item, String> tTitle;
-    
-    @FXML
-    private TableColumn<Item, String> tPrice;
-    
-    @FXML
-    private TableColumn<Item, Hyperlink> tURL;
-    
-    @FXML
-    private TableColumn<Item, String> tDate;
+    @FXML private TableView<Item> tableView = new TableView<Item>();
+    @FXML private TableColumn<Item, String> tTitle = new TableColumn<Item, String>();
+    @FXML private TableColumn<Item, String> tPrice = new TableColumn<Item, String>();
+    @FXML private TableColumn<Item, Hyperlink> tURL = new TableColumn<Item, Hyperlink>();
+    @FXML private TableColumn<Item, String> tDate = new TableColumn<Item, String>();
 
     
     private WebScraper scraper;
@@ -115,6 +92,28 @@ public class Controller {
     	scraper = new WebScraper();
     }
     
+    /**
+     * getter & setter for unit test
+     */
+    public String getLabelCount() {
+    	return labelCount.getText();
+    }
+    
+    public Boolean getRefine() {
+    	return refineButton.isDisabled();
+    }
+    
+    public String getTextField() {
+    	return textFieldKeyword.getText();
+    }
+    
+    public void setLabelMin() {
+    	labelMin.setText("http://www.google.com");
+    }
+    
+    public void setLabelLatest() {
+    	labelLatest.setText("http://www.google.com");
+    }
 
     /**
      * Default initializer. It is empty.
@@ -131,7 +130,7 @@ public class Controller {
     }
     
 	// for summary task 1 min price url- dhleeab
-    public String findMinPrice(List<Item> result) {
+    public static String findMinPrice(List<Item> result) {
      	double min = 1;	// by setting the initial min as 1 to handle the zero division
     	int size = result.size();
     	String min_url = "-";
@@ -155,7 +154,7 @@ public class Controller {
     }
     
 	// for summary task 1 average price - dhleeab
-    public double findAvgPrice(List<Item> result) {
+    public static double findAvgPrice(List<Item> result) {
     	int numOfItems = 0; 
     	double aggregatePrice = 0.0;
     	
@@ -170,7 +169,7 @@ public class Controller {
     }
     
 	// for summary task 1 latest url - dhleeab
-    public String findLatest(List<Item> result) {
+    public static String findLatest(List<Item> result) {
     	String latest_url = result.get(0).getUrl().getText();
     	String late_date = result.get(0).getDate();
     	
@@ -179,7 +178,7 @@ public class Controller {
 	    		SimpleDateFormat formatter1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	    		Date this_date = formatter1.parse(item.getDate());
 	    		Date min_date = formatter1.parse(late_date);
-	    		if(min_date.compareTo(this_date) > 0) {
+	    		if(min_date.compareTo(this_date) < 0) {
 	    			late_date = item.getDate();
 	    			latest_url = item.getUrl().getText();
 	    		}
@@ -187,7 +186,7 @@ public class Controller {
 				e.printStackTrace();
 			} 	
     	}
-    	
+		
     	return latest_url;
     }
     
@@ -197,74 +196,74 @@ public class Controller {
 	@FXML
     public void actionSearch(ActionEvent event) {
 		
-		// disable refine & revert button when Go button is clicked
 		refineButton.setDisable(false);
 		revertButton.setDisable(false);
 		
-    	System.out.println("actionSearch: " + textFieldKeyword.getText());
-    	String output = "";
-    	
-    	List<Item> result = scraper.scrape(textFieldKeyword.getText());
-    	
-    	System.out.println("Additional website chosen is Preloved");
-    	
-    	// TASK 1 - dhleeab
-    	int size = result == null ? 0 : result.size();
-    	
-    	// for summary
-    	if (size != 0) {
-    		labelCount.setText(String.valueOf(size));
-    		labelMin.setText(findMinPrice(result));
-    		labelPrice.setText("$" + Double.toString(findAvgPrice(result)));
-    		labelLatest.setText(findLatest(result));
-    	} else {	
-    		// Initialization of the data on the Summary Tab if there is no data 
-	    	labelCount.setText("0");
-    		labelMin.setText("-");
-    		labelPrice.setText("-");
-    		labelLatest.setText("-");	
-    	}
-    	
-    	// ## TASK 4 - mkimaj ## ///////////////////////////////////////////////////////////////
-    	
-    	final ObservableList<Item> data = FXCollections.observableArrayList();	// Initialize ObservaleList used for
-    																			// inserting data into the table in the Table tab
-    	if (size != 0) {
-	    	for (Item item : result) {
-	
-	    		// for console output
-	    		output += item.getTitle() + "\tHK$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
-	    		
-	    		// EventHandler for click action on the URL in the table cell
-	    		EventHandler<ActionEvent> hyperlinkHandler_action = new EventHandler<ActionEvent>() {
-	    		    public void handle(ActionEvent event) {
-	    		    	try {
-	    					Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());	// open the browser for given url
-	    				} catch (IOException | URISyntaxException e) {
-	    					e.printStackTrace();
-	    				}
-	    		    }
-	    		};
-	    		
-	    		// put EventHandler on the url attribute for item
-	    		item.getUrl().setOnAction(hyperlinkHandler_action);
-	    		data.add(item);
-	    	}
-    	}
-    	// for recalling result list for refine search and revert
-    	if(first_item) {
-    		prev_result = result;
-    		first_item = false;
-    	} else {
-    		reverting_result = prev_result;
-    		prev_result = result;
-    	}
-    	
-    	// for console output
-    	textAreaConsole.setText(output);
-    	
-    	// insert item in the table as a single row
-    	tableView.setItems(data);
+		System.out.println("actionSearch: " + textFieldKeyword.getText());
+		String output = "";
+		
+		List<Item> result = scraper.scrape(textFieldKeyword.getText());
+		
+		System.out.println("Additional website chosen is Preloved");
+		
+		// TASK 1 - dhleeab
+		int size = result == null ? 0 : result.size();
+		
+		// for summary
+		if (size != 0) {
+			labelCount.setText(String.valueOf(size));
+			labelMin.setText(findMinPrice(result));
+			labelPrice.setText("$" + Double.toString(findAvgPrice(result)));
+			labelLatest.setText(findLatest(result));
+		} else {	
+			// Initialization of the data on the Summary Tab if there is no data 
+			labelCount.setText("0");
+			labelMin.setText("-");
+			labelPrice.setText("-");
+			labelLatest.setText("-");	
+		}
+		
+		// ## TASK 4 - mkimaj ## ///////////////////////////////////////////////////////////////
+		
+		final ObservableList<Item> data = FXCollections.observableArrayList();	// Initialize ObservaleList used for
+																				// inserting data into the table in the Table tab
+		if (size != 0) {
+			for (Item item : result) {
+
+				// for console output
+				output += item.getTitle() + "\tHK$" + item.getPrice() + "\t" + item.getPortal() + "\t" + item.getUrl().getText() + "\t" + item.getDate() + "\n";
+				
+				// EventHandler for click action on the URL in the table cell
+				EventHandler<ActionEvent> hyperlinkHandler_action = new EventHandler<ActionEvent>() {
+				    public void handle(ActionEvent event) {
+				    	try {
+							Desktop.getDesktop().browse(new URL(item.getUrl().getText()).toURI());	// open the browser for given url
+						} catch (IOException | URISyntaxException e) {
+							e.printStackTrace();
+						}
+				    }
+				};
+				
+				// put EventHandler on the url attribute for item
+				item.getUrl().setOnAction(hyperlinkHandler_action);
+				data.add(item);
+			}
+		}
+
+		// for recalling result list for refine search and revert
+		if(first_item) {
+			prev_result = result;
+			first_item = false;
+		} else {
+			reverting_result = prev_result;
+			prev_result = result;
+		}
+		
+		// for console output
+		textAreaConsole.setText(output);
+		
+		// insert item in the table as a single row
+		tableView.setItems(data);
     	
     }
     
@@ -275,7 +274,7 @@ public class Controller {
 	// ## TASK 5 - mkimaj ## ///////////////////////////////////////////////////////////////
 	
 	@FXML
-    private void refineSearch(ActionEvent event) {
+    public void refineSearch(ActionEvent event) {
 		
 		// disable refine & revert button when Refine button is clicked
 		refineButton.setDisable(true);
@@ -380,7 +379,7 @@ public class Controller {
 	// ## TASK 6 - dhleeab ## ///////////////////////////////////////////////////////////////
 	
     @FXML
-    private void actionNew() {
+    public void actionNew() {
 		refineButton.setDisable(true);
 		revertButton.setDisable(true);
 		
@@ -439,14 +438,14 @@ public class Controller {
     }
     
     @FXML
-    private void actionClose() {
+    public void actionClose() {
     
     	refineButton.setDisable(true);
     	revertButton.setDisable(true);
 		textFieldKeyword.setText("");
-		TabPane tabPane = new TabPane();
-		tabPane.getSelectionModel().select(consoleTab);
-
+		SingleSelectionModel<Tab> selectionModel = tabPane.getSelectionModel();
+		selectionModel.select(consoleTab);
+		
     	if(prev_result != null) {
     		prev_result.clear();
     	}
@@ -488,9 +487,10 @@ public class Controller {
     	alert.setContentText("KIM, Tae Woo/ tkimae@connect.ust.hk/ tkimae \n"
     			+ "KIM, MinKyung/ mkimaj@connect.ust.hk/ mkimaj \n"
     			+ "LEE, Do Hyun/ dhleeab@connect.ust.hk/ dhleeab "
-    			);
+    	);
 
     	alert.showAndWait();
     }
+    
 }
 

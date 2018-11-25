@@ -10,37 +10,43 @@ public class Item {
 	private String date ;
 	private String portal ;
 	
-	public void Item() {
+	public Item() {
+		
 	}
 	
+	public void setTitle(String title) {
+		this.title = title;
+	}
 	public String getTitle() {
 		return title;
 	}
-	public void setTitle(String title) {
-		this.title = title;
+	
+	public void setPrice(double price) {
+		this.price = price;
 	}
 	public double getPrice() {
 		return price;
 	}
-	public void setPrice(double price) {
-		this.price = price;
+	
+	public void setUrl(String url) {
+		this.url.setText(url);
 	}
 	public Hyperlink getUrl() {
 		return url;
 	}
-	public void setUrl(String url) {
-		this.url.setText(url);
+	
+	public void setDate(String date) {
+		this.date = date;
 	}
 	public String getDate() {
 		return date;
 	}
-	public void setDate(String date) {
-		this.date = date;
+	
+	public void setPortal(String portal) {
+		this.portal = portal;
 	}
 	public String getPortal() {
 		return portal;
 	}
-	public void setPortal(String portal) {
-		this.portal = portal;
-	}
+	
 }

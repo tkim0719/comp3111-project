@@ -183,8 +183,12 @@ public class WebScraper {
 
 				Item item = new Item();
 				item.setTitle(itemName.asText());
+<<<<<<< HEAD
 				//since date is not available on website, set it as 9999-99-99 99:99
 				item.setDate("9999-99-99 99:99");
+=======
+				item.setDate("0001-01-01 00:00");
+>>>>>>> eb5819fc3cb336e18d32de52cef871e8e0e0ff3a
 				item.setUrl(itemAnchor.getHrefAttribute());
 				if(itemPrice.contains("£"))
 				{
