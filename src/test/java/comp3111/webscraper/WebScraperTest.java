@@ -2,12 +2,6 @@ package comp3111.webscraper;
 
 
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Assert;
 import org.junit.BeforeClass;
 
@@ -20,8 +14,10 @@ import javafx.application.Application;
  */
 public class WebScraperTest {
 	
-	// Initialise Java FX
-	
+	/**
+	 * Initialise Java FX
+	 * @throws InterruptedException when Java FX is not initialized before the testing
+	 */
 	@BeforeClass
 	public static void setUpClass() throws InterruptedException {
 	   
@@ -36,47 +32,31 @@ public class WebScraperTest {
 	}
 	
 
-	// WebScraper
-	
-	@Test
-	public void testCscrape() {
-		WebScraper testWebScraper = new WebScraper();
-		Assert.assertFalse(testWebScraper.Cscrape("").isEmpty());
-	}
+	/**
+	 * Test CAscrape() function with empty keyword
+	 */
 	@Test
 	public void testCAscrape() {
 		WebScraper testWebScraper = new WebScraper();
 		Assert.assertFalse(testWebScraper.CAscrape("").isEmpty());
 	}
-	@Test
-	public void tesScrape() {
-		WebScraper testWebScraper =  new WebScraper();
-		Assert.assertFalse(testWebScraper.scrape("").isEmpty());
 	
-	}
+	/**
+	 * Test Cscrape() function with empty keyword
+	 */
 	@Test
-	public void testMerge() {
-		List<Item> result = new ArrayList<Item>();
-		List<Item> result2 = new ArrayList<Item>();
-		Item a = new Item();
-		Item b = new Item();
-		a.setDate("");
-		a.setPortal("Craiglist");
-		a.setPrice(10);
-		a.setTitle("a");
-		a.setUrl("");
-		b.setDate("");
-		b.setPortal("Preloved");
-		b.setPrice(10);
-		b.setTitle("b");
-		b.setUrl("");
-		result.add(a);
-		result2.add(b);
-		result = WebScraper.merge(result, result2);
-		assertEquals(result.get(0).getPortal(), "Craiglist");
-		
+	public void testCscrape() {
+		WebScraper testWebScraper = new WebScraper();
+		Assert.assertFalse(testWebScraper.Cscrape("").isEmpty());
 	}
-
-
+	
+	/**
+	 * Test scrape() function with empty keyword
+	 */
+	@Test
+	public void testScrape() {
+		WebScraper testWebScraper = new WebScraper();
+		Assert.assertFalse(testWebScraper.scrape("").isEmpty());
+	}
 	
 }

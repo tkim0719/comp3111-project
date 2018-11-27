@@ -25,7 +25,10 @@ import static org.junit.Assert.assertTrue;
 public class ControllerTest {
 	
 	// Initialise Java FX
-	
+	/**
+	 * Initialise Java FX
+	 * @throws InterruptedException
+	 */
 	@BeforeClass
 	public static void setUpClass() throws InterruptedException {
 	   
@@ -39,7 +42,11 @@ public class ControllerTest {
 	    System.out.printf("FX App thread started\n");
 	    Thread.sleep(500);
 	}
-
+	
+	/**
+	 * Testing for getting url of the minimum price item
+	 * @return void 
+	 */
 	@Test
 	public void testMinPrice_1() {
 		List<Item> result = new ArrayList<Item>();
@@ -61,6 +68,10 @@ public class ControllerTest {
 		assertEquals(Controller.findMinPrice(result), "A");
 	}
 	
+	/**
+	 * Testing for getting url of the minimum price item if the all price is 0
+	 * @return void 
+	 */
 	@Test
 	public void testMinPrice_2() {
 		List<Item> result = new ArrayList<Item>();
@@ -82,6 +93,10 @@ public class ControllerTest {
 		assertEquals(Controller.findMinPrice(result), "-");
 	}
 	
+	/**
+	 * Testing for getting average price for all searched items
+	 * @return void 
+	 */
 	@Test
 	public void testAvgPrice_1() {
 		List<Item> list = new ArrayList<Item>();
@@ -100,6 +115,10 @@ public class ControllerTest {
 		assertEquals(0, Double.compare(Controller.findAvgPrice(list), 20.0));
 	}
 	
+	/**
+	 * Testing for getting average price if all items price is 0
+	 * @return void 
+	 */
 	@Test
 	public void testAvgPrice_2() {
 		List<Item> list = new ArrayList<Item>();
@@ -118,7 +137,10 @@ public class ControllerTest {
 		assertEquals(0, Double.compare(Controller.findAvgPrice(list), 0.0));
 	}
 
-	
+	/**
+	 * Testing for getting url of the latest post item if the year is different
+	 * @return void 
+	 */
 	@Test
 	public void testLatest_1() {
 		List<Item> result = new ArrayList<Item>();
@@ -135,7 +157,11 @@ public class ControllerTest {
 		
 		assertEquals(Controller.findLatest(result), "B");
 	}
-		
+	
+	/**
+	 * Testing for getting url of the latest post item if the time is different
+	 * @return void 
+	 */
 	@Test
 	public void testLatest_2() {
 		List<Item> result = new ArrayList<Item>();
@@ -152,6 +178,10 @@ public class ControllerTest {
 		assertEquals(Controller.findLatest(result), "A");
 	}
 	
+	/**
+	 * Testing for ActionSearch whether go button shows the non-null data
+	 * @return void 
+	 */
 	@Test
 	public void testActionSearch() {
 		Controller a = new Controller();
@@ -160,6 +190,10 @@ public class ControllerTest {
 		Assert.assertNotNull(a.getLabelCount());
 	}
 	
+	/**
+	 * Testing for RefineSearch whether refine button shows the non-null data
+	 * @return void 
+	 */
 	@Test
 	public void testRefineSearch() {
 		Controller a = new Controller();
@@ -169,6 +203,11 @@ public class ControllerTest {
 		Assert.assertNotNull(a.getLabelCount());
 	}
 	
+	/**
+	 * Testing whether we can enter the url of the minimum price item
+	 * @return void 
+	 * @throws IOException
+	 */
 	@Test
 	public void testMinClick() throws IOException {
 		Controller a = new Controller();
@@ -177,6 +216,11 @@ public class ControllerTest {
 		a.MinClick(mockEvent);
 	}
 	
+	/**
+	 * Testing whether we can enter the url of the latest post item
+	 * @return void 
+	 * @throws IOException
+	 */
 	@Test
 	public void testLatestClick() throws IOException {
 		Controller a = new Controller();
@@ -185,6 +229,10 @@ public class ControllerTest {
 		a.LatestClick(mockEvent);
 	}
 	
+	/**
+	 * Testing for an action new 
+	 * @return void 
+	 */
 	@Test
 	public void testActionNew() {
 		Controller a = new Controller();
@@ -192,6 +240,10 @@ public class ControllerTest {
 		assertTrue("This will succeed", a.getRefine());
 	}
 	
+	/**
+	 * Testing for an action close
+	 * @return void 
+	 */
 	@Test
 	public void testActionClose() {
 		Controller a = new Controller();
