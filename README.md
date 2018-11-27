@@ -19,20 +19,17 @@
 ~~~
 comp3111-project/
   
-  src/main/java/
+    src/main/java/
+        Controller.java
+        Item.java
+        WebScraper.java
+        WebScraperApplication.java
     
-    Controller.java
-    Item.java
-    WebScraper.java
-    WebScraperApplication.java
-    
-  src/main/resources/
-    
-    ui.fxml
+    src/main/resources/
+        ui.fxml
    
-  src/test/java/
-    
-    ControllerTest.java
-    ItemTest.java
-    WebScraperTest.java
+    src/test/java/
+        ControllerTest.java
+        ItemTest.java
+        WebScraperTest.java
 ~~~
