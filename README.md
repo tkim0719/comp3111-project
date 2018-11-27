@@ -13,3 +13,23 @@
 2. Treat USD convert to HKD in 1 : 7.8 .
 3. Treat GBP convert to HKD in 1 : 10.17 .
 4. Last research does not work after refine.
+
+## File Hierarchy
+
+~~~
+comp3111-project/
+  
+  src/main/java/
+    Controller.java
+    Item.java
+    WebScraper.java
+    WebScraperApplication.java
+    
+  src/main/resources/
+    ui.fxml
+   
+  src/test/java/
+    ControllerTest.java
+    ItemTest.java
+    WebScraperTest.java
+~~~
