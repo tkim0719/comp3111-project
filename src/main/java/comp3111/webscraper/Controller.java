@@ -35,12 +35,7 @@ import java.util.Date;
 import java.text.ParseException;
 
 /**
- * 
- * @author kevinw
- *
- *
  * Controller class that manage GUI interaction. Please see document about JavaFX for details.
- * 
  */
 public class Controller {
 	
@@ -84,7 +79,6 @@ public class Controller {
     private Boolean first_item = true;	// to distinguish which result should be used for revert & refine
     
     
-    
     /**
      * Default controller
      */
@@ -92,29 +86,46 @@ public class Controller {
     	scraper = new WebScraper();
     }
     
+    
     /**
-     * getter & setter for unit test
+     * Label count getter for unit testing
+     * @return String
      */
     public String getLabelCount() {
     	return labelCount.getText();
     }
     
+    /**
+     * To check the refine button is disabled or not for unit testing
+     * @return Boolean
+     */
     public Boolean getRefine() {
     	return refineButton.isDisabled();
     }
     
+    /**
+     * Text Field Keyword getter for unit testing
+     * @return String
+     */
     public String getTextField() {
     	return textFieldKeyword.getText();
     }
     
+    /**
+     * Check whether the min price url link has been intialized
+     */
     public void setLabelMin() {
     	labelMin.setText("http://www.google.com");
     }
     
+    /**
+     * Check whether the latest post url link has been intialized
+     */
     public void setLabelLatest() {
     	labelLatest.setText("http://www.google.com");
     }
 
+    
     /**
      * Default initializer. It is empty.
      */
@@ -129,7 +140,12 @@ public class Controller {
 		
     }
     
-	// for summary task 1 min price url- dhleeab
+	/**
+	 * @author dhleeab
+	 * for summary task 1 min price url - dhleeab
+	 * @param result List of Item
+	 * @return String
+	 */
     public static String findMinPrice(List<Item> result) {
      	double min = 1;	// by setting the initial min as 1 to handle the zero division
     	int size = result.size();
@@ -153,7 +169,12 @@ public class Controller {
     	return min_url;
     }
     
-	// for summary task 1 average price - dhleeab
+	/**
+	 * @author dhleeab
+	 * for summary task 1 average price - dhleeab
+	 * @param result List of Item
+	 * @return Double
+	 */
     public static double findAvgPrice(List<Item> result) {
     	int numOfItems = 0; 
     	double aggregatePrice = 0.0;
@@ -168,7 +189,12 @@ public class Controller {
     	return aggregatePrice == 0.0 ? 0.0 : aggregatePrice/numOfItems;
     }
     
-	// for summary task 1 latest url - dhleeab
+	/** 
+	 * @author dhleeab
+	 * for summary task 1 latest url - dhleeab 
+	 * @param result List of Item
+	 * @return String
+	 */
     public static String findLatest(List<Item> result) {
     	String latest_url = result.get(0).getUrl().getText();
     	String late_date = result.get(0).getDate();
@@ -191,7 +217,9 @@ public class Controller {
     }
     
     /**
-     * Called when the search button is pressed.
+     * @author mkimaj
+     * Called when the search button is pressed. - mkimaj
+     * @param event ActionEvent
      */
 	@FXML
     public void actionSearch(ActionEvent event) {
@@ -268,11 +296,10 @@ public class Controller {
     }
     
 	/**
-     * Called when the refine button is pressed.
-     */
-	
-	// ## TASK 5 - mkimaj ## ///////////////////////////////////////////////////////////////
-	
+	 * @author mkimaj
+	 * Called when the refine button is pressed for TASK 5 - mkimaj
+	 * @param event ActionEvent
+	 */
 	@FXML
     public void refineSearch(ActionEvent event) {
 		
@@ -353,7 +380,10 @@ public class Controller {
     	tableView.setItems(data);
 	}
 	
-	// EventHandler for the clicking on the lowest price url in Summary tab
+	/**
+	 * EventHandler for the clicking on the lowest price url in Summary tab
+	 * @param event ActionEvent
+	 */
 	public void MinClick(ActionEvent event) {
         try {
 			Desktop.getDesktop().browse(new URL(labelMin.getText()).toURI());
@@ -362,7 +392,10 @@ public class Controller {
 		}
 	}
 
-	// EventHandler for the clicking on the latest post url in Summary tab
+	/** 
+	 * EventHandler for the clicking on the latest post url in Summary tab
+	 * @param event ActionEvent
+	 */
 	public void LatestClick(ActionEvent event) {
 		try {
 			Desktop.getDesktop().browse(new URL(labelLatest.getText()).toURI());
@@ -373,12 +406,10 @@ public class Controller {
 
     
     /**
-     * Called when the new button is pressed. Very dummy action - print something in the command prompt.
+     * @author dhleeab
+     * Called when the new button is pressed for TASK 6 - dhleeab
      */
-	
-	// ## TASK 6 - dhleeab ## ///////////////////////////////////////////////////////////////
-	
-    @FXML
+	@FXML
     public void actionNew() {
 		refineButton.setDisable(true);
 		revertButton.setDisable(true);
@@ -437,6 +468,10 @@ public class Controller {
     	reverting_result = null;
     }
     
+	/**
+	 * @author dhleeab
+	 * Called when the close button is pressed for TASK 6 - dhleeab
+	 */
     @FXML
     public void actionClose() {
     
@@ -473,12 +508,22 @@ public class Controller {
     	tableView.setItems(data);
     }
     
+    /**
+     * @author dhleeab
+     * Called when the quit button is pressed for TASK 6 - dhleeab
+     * @return void
+     */
     @FXML
     private void actionQuit() {
     	System.exit(0);
         Platform.exit();
     }
     
+    /**
+     * @author dhleeab
+     * Called when the About the team button is pressed for TASK 6 - dhleeab
+     * @return void
+     */
     @FXML
     private void actionAboutTeam() {
     	Alert alert = new Alert(AlertType.INFORMATION);

@@ -7,6 +7,11 @@ import static org.junit.Assert.*;
 
 import javafx.application.Application;
 
+
+/**
+ * 
+ * Item Class JUnit Testing
+ */
 public class ItemTest {
 	
 	// Initialise Java FX

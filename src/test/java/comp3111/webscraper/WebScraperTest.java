@@ -9,6 +9,9 @@ import org.junit.BeforeClass;
 import javafx.application.Application;
 
 
+/**
+ * JUnit Testing for the functions for WebScraper
+ */
 
 public class WebScraperTest {
 	
