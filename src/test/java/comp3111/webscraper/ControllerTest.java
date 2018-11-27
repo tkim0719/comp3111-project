@@ -24,10 +24,9 @@ import static org.junit.Assert.assertTrue;
 
 public class ControllerTest {
 	
-	// Initialise Java FX
 	/**
 	 * Initialise Java FX
-	 * @throws InterruptedException
+	 * @throws InterruptedException when there is an error setting up the javafx environment
 	 */
 	@BeforeClass
 	public static void setUpClass() throws InterruptedException {
@@ -45,7 +44,6 @@ public class ControllerTest {
 	
 	/**
 	 * Testing for getting url of the minimum price item
-	 * @return void 
 	 */
 	@Test
 	public void testMinPrice_1() {
@@ -70,7 +68,6 @@ public class ControllerTest {
 	
 	/**
 	 * Testing for getting url of the minimum price item if the all price is 0
-	 * @return void 
 	 */
 	@Test
 	public void testMinPrice_2() {
@@ -95,7 +92,6 @@ public class ControllerTest {
 	
 	/**
 	 * Testing for getting average price for all searched items
-	 * @return void 
 	 */
 	@Test
 	public void testAvgPrice_1() {
@@ -117,7 +113,6 @@ public class ControllerTest {
 	
 	/**
 	 * Testing for getting average price if all items price is 0
-	 * @return void 
 	 */
 	@Test
 	public void testAvgPrice_2() {
@@ -139,7 +134,6 @@ public class ControllerTest {
 
 	/**
 	 * Testing for getting url of the latest post item if the year is different
-	 * @return void 
 	 */
 	@Test
 	public void testLatest_1() {
@@ -160,7 +154,6 @@ public class ControllerTest {
 	
 	/**
 	 * Testing for getting url of the latest post item if the time is different
-	 * @return void 
 	 */
 	@Test
 	public void testLatest_2() {
@@ -180,7 +173,6 @@ public class ControllerTest {
 	
 	/**
 	 * Testing for ActionSearch whether go button shows the non-null data
-	 * @return void 
 	 */
 	@Test
 	public void testActionSearch() {
@@ -192,7 +184,6 @@ public class ControllerTest {
 	
 	/**
 	 * Testing for RefineSearch whether refine button shows the non-null data
-	 * @return void 
 	 */
 	@Test
 	public void testRefineSearch() {
@@ -205,8 +196,7 @@ public class ControllerTest {
 	
 	/**
 	 * Testing whether we can enter the url of the minimum price item
-	 * @return void 
-	 * @throws IOException
+	 * @throws IOException throw exception when there is invalid input of url
 	 */
 	@Test
 	public void testMinClick() throws IOException {
@@ -218,8 +208,7 @@ public class ControllerTest {
 	
 	/**
 	 * Testing whether we can enter the url of the latest post item
-	 * @return void 
-	 * @throws IOException
+	 * @throws IOException throw exception when there is invalid input of url
 	 */
 	@Test
 	public void testLatestClick() throws IOException {
@@ -231,7 +220,6 @@ public class ControllerTest {
 	
 	/**
 	 * Testing for an action new 
-	 * @return void 
 	 */
 	@Test
 	public void testActionNew() {
@@ -242,7 +230,6 @@ public class ControllerTest {
 	
 	/**
 	 * Testing for an action close
-	 * @return void 
 	 */
 	@Test
 	public void testActionClose() {
