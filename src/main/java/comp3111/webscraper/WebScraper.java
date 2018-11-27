@@ -1,7 +1,6 @@
 package comp3111.webscraper;
 
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -10,26 +9,25 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import java.util.Vector;
-import java.util.Calendar;
 import java.util.Comparator;
 
 
 /**
- * WebScraper provide a sample code that scrape web content. After it is constructed, you can call the method scrape with a keyword, 
+ * WebScraper provide a code that scrape websites. You can call the method scrape with a keyword, 
  * the client will go to the default url and parse the page by looking at the HTML DOM.  
- * <br/>
+ * 
  * In this particular sample code, it access to craigslist.org. You can directly search on an entry by typing the URL
- * <br/>
+ * 
  * https://newyork.craigslist.org/search/sss?sort=rel&amp;query=KEYWORD
- *  <br/>
+ * 
  * where KEYWORD is the keyword you want to search.
- * <br/>
+ * 
  * Assume you are working on Chrome, paste the url into your browser and press F12 to load the source code of the HTML. You might be freak
  * out if you have never seen a HTML source code before. Keep calm and move on. Press Ctrl-Shift-C (or CMD-Shift-C if you got a mac) and move your
  * mouse cursor around, different part of the HTML code and the corresponding the HTML objects will be highlighted. Explore your HTML page from
  * body &rarr; section class="page-container" &rarr; form id="searchform" &rarr; div class="content" &rarr; ul class="rows" &rarr; any one of the multiple 
  * li class="result-row" &rarr; p class="result-info". You might see something like this:
- * <br/>
+ * 
  * <pre>
  * {@code
  *    <p class="result-info">
@@ -56,7 +54,7 @@ import java.util.Comparator;
  *   </p>
  *}
  *</pre>
- * <br/>
+ * 
  * The code 
  * <pre>
  * {@code
@@ -68,6 +66,7 @@ import java.util.Comparator;
  * 
  *
  */
+
 public class WebScraper {
 	//URL of 
 	private static final String DEFAULT_URL = "https://newyork.craigslist.org/";
@@ -85,11 +84,16 @@ public class WebScraper {
 	}
 
 	
+	/**
+	 * For scraping the Craigslist for given keyword. - tkimae
+	 * @author tkimae
+	 * @param keyword String
+	 * @return List of Item
+	 */
 	public List<Item> Cscrape(String keyword) {
 
 		
 		try {
-			
 			Vector<Item> result = new Vector<Item>();
 			int pN = 1;
 			String searchUrl = "";
@@ -108,6 +112,7 @@ public class WebScraper {
 				System.out.println(itemsM.size());
 				HtmlElement pItem = ((HtmlElement) itemsM.get(1));
 				HtmlAnchor itemAnchorP = ((HtmlAnchor) pItem.getFirstByXPath("//span[@class='buttons']/a[3]"));
+				
 				for (int j = 0; j < itemsM.size();j++) {
 					HtmlElement htmlItem = (HtmlElement) itemsM.get(j);
 					HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//p[@class='result-info']/a"));
@@ -141,8 +146,13 @@ public class WebScraper {
 		}
 		return null;
 	}
-	//Task 2 
-	//scrape data from additional website called "preloved"
+	
+	/**
+	 * For scraping the Preloved for given keyword. - tkimae
+	 * @author tkimae
+	 * @param keyword String
+	 * @return List of Item
+	 */
 	public List<Item> CAscrape(String keyword) {
 
 		try {
@@ -190,13 +200,26 @@ public class WebScraper {
 		}
 		return null;
 	}
-	//scrape on two websites by keyword
+	
+	/**
+	 * For merging two sets of results from craigslist and preloved into one. - tkimae
+	 * @author tkimae
+	 * @param keyword String
+	 * @return List of Item
+	 */
 	public List<Item> scrape(String keyword) {
 		client.close();
 		return merge(Cscrape(keyword),CAscrape(keyword));
 		 
 	}
-	//merge and sort by price from two lists
+	
+	/**
+	 * Merge function which is called in scrape function in the order of price. - tkimae
+	 * @author tkimae
+	 * @param l1 List of Item
+	 * @param l2 List of Item
+	 * @return List of Item
+	 */
 	public static List<Item> merge(List<Item> l1, List<Item> l2) {
 	    for (int index1 = 0, index2 = 0; index2 < l2.size(); index1++) {
 	        if (index1 == l1.size() || l1.get(index1).getPrice() > l2.get(index2).getPrice()) {

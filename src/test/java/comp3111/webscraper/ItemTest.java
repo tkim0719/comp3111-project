@@ -7,10 +7,17 @@ import static org.junit.Assert.*;
 
 import javafx.application.Application;
 
+
+/**
+ * Item Class JUnit Testing
+ */
+
 public class ItemTest {
 	
-	// Initialise Java FX
-	
+	/**
+	 * Initialise Java FX
+	 * @throws InterruptedException
+	 */
 	@BeforeClass
 	public static void setUpClass() throws InterruptedException {
 	   
@@ -24,8 +31,9 @@ public class ItemTest {
 	    Thread.sleep(500);
 	}
 	
-	// Item
-
+	/**
+	 * Testing for the Item title setter and getter
+	 */
 	@Test
 	public void testSetTitle() {
 		Item i = new Item();
@@ -33,6 +41,9 @@ public class ItemTest {
 		assertEquals(i.getTitle(), "COMP 3111 Team 6 sudo korean");
 	}
 	
+	/**
+	 * Testing for the Item price setter and getter 
+	 */
 	@Test
 	public void testSetPrice() {
 		Item i = new Item();
@@ -41,6 +52,9 @@ public class ItemTest {
 		assertEquals(price, i.getPrice(), 0.0);
 	}
 	
+	/**
+	 * Testing for the Item URL setter and getter 
+	 */
 	@Test
 	public void testSetUrl() {
 		Item i = new Item();
@@ -48,6 +62,9 @@ public class ItemTest {
 		assertEquals(i.getUrl().getText(), "https://newyork.craigslist.org/");
 	}
 	
+	/**
+	 * Testing for the Item Date setter and getter 
+	 */
 	@Test
 	public void testSetDate() {
 		Item i = new Item();
@@ -55,6 +72,9 @@ public class ItemTest {
 		assertEquals(i.getDate(), "2018-06-12 00:00");
 	}
 	
+	/**
+	 * Testing for the Item portal setter and getter 
+	 */
 	@Test
 	public void testSetPortal() {
 		Item i = new Item();
