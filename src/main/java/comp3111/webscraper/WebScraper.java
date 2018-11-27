@@ -1,7 +1,6 @@
 package comp3111.webscraper;
 
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -10,26 +9,25 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import java.util.Vector;
-import java.util.Calendar;
 import java.util.Comparator;
 
 
 /**
- * WebScraper provide a sample code that scrape web content. After it is constructed, you can call the method scrape with a keyword, 
+ * WebScraper provide a code that scrape websites. You can call the method scrape with a keyword, 
  * the client will go to the default url and parse the page by looking at the HTML DOM.  
- * <br/>
+ * 
  * In this particular sample code, it access to craigslist.org. You can directly search on an entry by typing the URL
- * <br/>
+ * 
  * https://newyork.craigslist.org/search/sss?sort=rel&amp;query=KEYWORD
- *  <br/>
+ * 
  * where KEYWORD is the keyword you want to search.
- * <br/>
+ * 
  * Assume you are working on Chrome, paste the url into your browser and press F12 to load the source code of the HTML. You might be freak
  * out if you have never seen a HTML source code before. Keep calm and move on. Press Ctrl-Shift-C (or CMD-Shift-C if you got a mac) and move your
  * mouse cursor around, different part of the HTML code and the corresponding the HTML objects will be highlighted. Explore your HTML page from
  * body &rarr; section class="page-container" &rarr; form id="searchform" &rarr; div class="content" &rarr; ul class="rows" &rarr; any one of the multiple 
  * li class="result-row" &rarr; p class="result-info". You might see something like this:
- * <br/>
+ * 
  * <pre>
  * {@code
  *    <p class="result-info">
@@ -56,7 +54,7 @@ import java.util.Comparator;
  *   </p>
  *}
  *</pre>
- * <br/>
+ * 
  * The code 
  * <pre>
  * {@code
@@ -68,6 +66,7 @@ import java.util.Comparator;
  * 
  *
  */
+
 public class WebScraper {
 
 	private static final String DEFAULT_URL = "https://newyork.craigslist.org/";
@@ -84,6 +83,12 @@ public class WebScraper {
 	}
 
 	
+	/**
+	 * For scraping the Craigslist for given keyword. - tkimae
+	 * @author tkimae
+	 * @param keyword String
+	 * @return List of Item
+	 */
 	public List<Item> Cscrape(String keyword) {
 
 		
@@ -91,11 +96,9 @@ public class WebScraper {
 			String searchUrl = DEFAULT_URL + "/search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
 			HtmlPage page = client.getPage(searchUrl);
 
-			//String searchUrl2 = NEW_URL + "/search/products/?query=" + URLEncoder.encode(keyword, "UTF-8");
-			//HtmlPage page2 = client.getPage(searchUrl2);
 			List<?> items = (List<?>) page.getByXPath("//li[@class='result-row']");
 
-			//Determining last page pN
+			// Determining last page pN
 			HtmlElement it = (HtmlElement) items.get(1);
 			HtmlElement pageNum = ((HtmlElement) it.getFirstByXPath("//span[@class='totalcount']"));
 			String pageNum1 = pageNum.asText();
@@ -114,11 +117,9 @@ public class WebScraper {
 			{
 				pN = pageNum2/120;
 			}			
-			//List<?> items2 = (List<?>) page2.getByXPath("//div[@class='col-lg-3 col-md-4 col-sm-4 col-xs-6']");
+
 			Vector<Item> result = new Vector<Item>();
-			//////////////////////////////
-			pN=1;
-			//////////////////////////
+
 			for(int i=0;i<pN;i++)
 			{
 				System.out.println("Number of Craiglist page scraped so far is "+(i+1)+"/"+pN);
@@ -134,7 +135,7 @@ public class WebScraper {
 				String searchUrlM = DEFAULT_URL + "search/sss?"+extra+"sort=rel&query="+ URLEncoder.encode(keyword, "UTF-8");
 				HtmlPage pageM = client.getPage(searchUrlM);
 				List<?> itemsM = (List<?>) pageM.getByXPath("//li[@class='result-row']");
-				//Vector<Item> result2 = new Vector<Item>();
+				
 				for (int j = 0; j < itemsM.size();j++) {
 					HtmlElement htmlItem = (HtmlElement) itemsM.get(j);
 					HtmlAnchor itemAnchor = ((HtmlAnchor) htmlItem.getFirstByXPath(".//p[@class='result-info']/a"));
@@ -169,6 +170,13 @@ public class WebScraper {
 		}
 		return null;
 	}
+	
+	/**
+	 * For scraping the Preloved for given keyword. - tkimae
+	 * @author tkimae
+	 * @param keyword String
+	 * @return List of Item
+	 */
 	public List<Item> CAscrape(String keyword) {
 
 		try {
@@ -210,12 +218,26 @@ public class WebScraper {
 		}
 		return null;
 	}
+	
+	/**
+	 * For merging two sets of results from craigslist and preloved into one. - tkimae
+	 * @author tkimae
+	 * @param keyword String
+	 * @return List of Item
+	 */
 	public List<Item> scrape(String keyword) {
 		client.close();
 		return merge(Cscrape(keyword),CAscrape(keyword));
 		 
 	}
-
+	
+	/**
+	 * Merge function which is called in scrape function in the order of price. - tkimae
+	 * @author tkimae
+	 * @param l1 List of Item
+	 * @param l2 List of Item
+	 * @return List of Item
+	 */
 	public List<Item> merge(List<Item> l1, List<Item> l2) {
 	    for (int index1 = 0, index2 = 0; index2 < l2.size(); index1++) {
 	        if (index1 == l1.size() || l1.get(index1).getPrice() > l2.get(index2).getPrice()) {

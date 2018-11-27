@@ -23,6 +23,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 
+/**
+ * 
+ * JUnit Testing for the functions for Controller
+ */
+
 public class ControllerTest {
 	
 	// Initialise Java FX

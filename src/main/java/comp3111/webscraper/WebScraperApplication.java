@@ -11,7 +11,6 @@ import javafx.scene.Scene;
 
 
 /**
- * @author kevinw
  * 
  * The entry point of the entire program. It is quite unlikely you need to change this file. But you can change it if you want :)
  * 
@@ -35,14 +34,15 @@ import javafx.scene.Scene;
  *
  * 
  */
+
 public class WebScraperApplication extends Application {
 
     private static final String UI_FILE = "/ui.fxml";  //It is very important that you put the file under folder src/main/resources/
     
-	/* 
+	/**
 	 * @see javafx.application.Application#start(javafx.stage.Stage)
-	 * 
 	 * This function will be called by the framework shortly after the program started. You are not required to touch any part of this.
+	 * @throws Exception when the UI framework is not build properly
 	 */
 	@Override
 	public void start(Stage stage) throws Exception {
@@ -58,7 +58,7 @@ public class WebScraperApplication extends Application {
 
 	/**
 	 * Entry point of the program. No argument should be supplied
-	 * @param args - not used.
+	 * @param args not used.
 	 */
 	public static void main(String args[]) {
 		Application.launch(args);
