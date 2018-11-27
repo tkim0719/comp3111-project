@@ -141,8 +141,8 @@ public class Controller {
     }
     
 	/**
-	 * @author dhleeab
 	 * for summary task 1 min price url - dhleeab
+	 * @author dhleeab
 	 * @param result List of Item
 	 * @return String
 	 */
@@ -170,8 +170,8 @@ public class Controller {
     }
     
 	/**
-	 * @author dhleeab
 	 * for summary task 1 average price - dhleeab
+	 * @author dhleeab
 	 * @param result List of Item
 	 * @return Double
 	 */
@@ -190,8 +190,8 @@ public class Controller {
     }
     
 	/** 
+	 * for summary task 1 latest url - dhleeab
 	 * @author dhleeab
-	 * for summary task 1 latest url - dhleeab 
 	 * @param result List of Item
 	 * @return String
 	 */
@@ -217,8 +217,8 @@ public class Controller {
     }
     
     /**
-     * @author mkimaj
      * Called when the search button is pressed. - mkimaj
+     * @author mkimaj
      * @param event ActionEvent
      */
 	@FXML
@@ -296,8 +296,8 @@ public class Controller {
     }
     
 	/**
-	 * @author mkimaj
 	 * Called when the refine button is pressed for TASK 5 - mkimaj
+	 * @author mkimaj
 	 * @param event ActionEvent
 	 */
 	@FXML
@@ -406,8 +406,8 @@ public class Controller {
 
     
     /**
-     * @author dhleeab
      * Called when the new button is pressed for TASK 6 - dhleeab
+     * @author dhleeab
      */
 	@FXML
     public void actionNew() {
@@ -469,8 +469,8 @@ public class Controller {
     }
     
 	/**
-	 * @author dhleeab
 	 * Called when the close button is pressed for TASK 6 - dhleeab
+	 * @author dhleeab
 	 */
     @FXML
     public void actionClose() {
@@ -509,8 +509,8 @@ public class Controller {
     }
     
     /**
-     * @author dhleeab
      * Called when the quit button is pressed for TASK 6 - dhleeab
+     * @author dhleeab
      * @return void
      */
     @FXML
@@ -520,8 +520,8 @@ public class Controller {
     }
     
     /**
-     * @author dhleeab
      * Called when the About the team button is pressed for TASK 6 - dhleeab
+     * @author dhleeab
      * @return void
      */
     @FXML

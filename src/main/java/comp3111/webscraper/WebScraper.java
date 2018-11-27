@@ -82,9 +82,10 @@ public class WebScraper {
 		client.getOptions().setJavaScriptEnabled(false);
 	}
 
+	
 	/**
-	 * @author tkimae
 	 * For scraping the Craigslist for given keyword. - tkimae
+	 * @author tkimae
 	 * @param keyword String
 	 * @return List of Item
 	 */
@@ -171,8 +172,8 @@ public class WebScraper {
 	}
 	
 	/**
-	 * @author tkimae
 	 * For scraping the Preloved for given keyword. - tkimae
+	 * @author tkimae
 	 * @param keyword String
 	 * @return List of Item
 	 */
@@ -219,8 +220,8 @@ public class WebScraper {
 	}
 	
 	/**
-	 * @author tkimae
 	 * For merging two sets of results from craigslist and preloved into one. - tkimae
+	 * @author tkimae
 	 * @param keyword String
 	 * @return List of Item
 	 */
@@ -231,8 +232,8 @@ public class WebScraper {
 	}
 	
 	/**
-	 * @author tkimae
 	 * Merge function which is called in scrape function in the order of price. - tkimae
+	 * @author tkimae
 	 * @param l1 List of Item
 	 * @param l2 List of Item
 	 * @return List of Item
