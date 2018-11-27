@@ -10,8 +10,8 @@
 ## Assumption
 
 1. Use https://www.preloved.co.uk and https://newyork.craigslist.org/ as our reselling portal.
-2. Treat USD convert to HKD in 1 : 7.8 .
-3. Treat GBP convert to HKD in 1 : 10.17 .
+2. Treat USD convert to HKD in 1:7.8
+3. Treat GBP convert to HKD in 1:10.17
 4. Last research does not work after refine.
 
 ## Folder Hierarchy
