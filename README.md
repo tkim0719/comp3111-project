@@ -14,7 +14,7 @@
 3. Treat GBP convert to HKD in 1 : 10.17 .
 4. Last research does not work after refine.
 
-## File Hierarchy
+## Folder Hierarchy
 
 ~~~
 comp3111-project/
