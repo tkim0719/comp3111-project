@@ -69,11 +69,11 @@ import java.util.Comparator;
  *
  */
 public class WebScraper {
-
+	//URL of 
 	private static final String DEFAULT_URL = "https://newyork.craigslist.org/";
-	//URL of additional website being scraped
+	//URL of additional website being scraped: preloved
 	private static final String NEW_URL = "https://www.preloved.co.uk";
-	private WebClient client;
+	private static WebClient client;
 
 	/**
 	 * Default Constructor 
@@ -89,24 +89,15 @@ public class WebScraper {
 
 		
 		try {
-			//String searchUrl = DEFAULT_URL + "/search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
-			//HtmlPage page = client.getPage(searchUrl);
-			//List<?> items = (List<?>) page.getByXPath("//li[@class='result-row']");
-			Vector<Item> result = new Vector<Item>();
-			int pN;
 			
-			pN=1;
+			Vector<Item> result = new Vector<Item>();
+			int pN = 1;
 			String searchUrl = "";
 			String searchUrl2 = "/search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
 			while(searchUrl2.startsWith("/"))
 			{
 				searchUrl = DEFAULT_URL + searchUrl2;
-				//to show that programming is still running, print statement in command-line console while scraping 
-				
-				
-				
 				HtmlPage pageM = client.getPage(searchUrl);
-				
 				List<?> itemsM = (List<?>) pageM.getByXPath("//li[@class='result-row']");
 				if(itemsM.size()==0)
 				{
@@ -140,17 +131,7 @@ public class WebScraper {
 					result.add(item);
 				}
 				searchUrl2 = itemAnchorP.getHrefAttribute();
-				System.out.println("ddddddddd"+searchUrl2+"SSSSSSSSSSSSSSSS");
-				if(searchUrl2 == null)
-				{
-					System.out.println("yes");
-				}
-				else if(searchUrl2 =="")
-				{
-					System.out.println("yesyes");
-				}
 				pN++;
-
 			}
 			result.sort(Comparator.comparing(Item::getPrice));
 			return result;
@@ -167,10 +148,8 @@ public class WebScraper {
 		try {
 			String searchUrl2 = NEW_URL + "/search?keyword=" + URLEncoder.encode(keyword, "UTF-8");
 			HtmlPage page2 = client.getPage(searchUrl2);
-			
 			List<?> items2 = (List<?>) page2.getByXPath("//li[@class='search-result']");
 			Vector<Item> result2 = new Vector<Item>();
-
 			for (int i = 0; i < items2.size(); i++) {
 				
 				HtmlElement htmlItem = (HtmlElement) items2.get(i);
@@ -183,12 +162,7 @@ public class WebScraper {
 
 				Item item = new Item();
 				item.setTitle(itemName.asText());
-<<<<<<< HEAD
-				//since date is not available on website, set it as 9999-99-99 99:99
-				item.setDate("9999-99-99 99:99");
-=======
 				item.setDate("0001-01-01 00:00");
->>>>>>> eb5819fc3cb336e18d32de52cef871e8e0e0ff3a
 				item.setUrl(itemAnchor.getHrefAttribute());
 				if(itemPrice.contains("£"))
 				{
@@ -207,6 +181,7 @@ public class WebScraper {
 				
 				result2.add(item);
 			}
+			System.out.println(result2.size());
 			result2.sort(Comparator.comparing(Item::getPrice));
 			return result2;
 			
@@ -222,7 +197,7 @@ public class WebScraper {
 		 
 	}
 	//merge and sort by price from two lists
-	public List<Item> merge(List<Item> l1, List<Item> l2) {
+	public static List<Item> merge(List<Item> l1, List<Item> l2) {
 	    for (int index1 = 0, index2 = 0; index2 < l2.size(); index1++) {
 	        if (index1 == l1.size() || l1.get(index1).getPrice() > l2.get(index2).getPrice()) {
 	            l1.add(index1, l2.get(index2++));
