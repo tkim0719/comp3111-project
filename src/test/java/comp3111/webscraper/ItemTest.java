@@ -11,12 +11,11 @@ import javafx.application.Application;
 /**
  * Item Class JUnit Testing
  */
-
 public class ItemTest {
 	
 	/**
 	 * Initialise Java FX
-	 * @throws InterruptedException
+	 * @throws InterruptedException when Java FX is not initialized before the testing
 	 */
 	@BeforeClass
 	public static void setUpClass() throws InterruptedException {
