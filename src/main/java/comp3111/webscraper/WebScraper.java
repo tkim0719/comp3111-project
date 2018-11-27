@@ -68,10 +68,11 @@ import java.util.Comparator;
  */
 
 public class WebScraper {
-
+	//URL of 
 	private static final String DEFAULT_URL = "https://newyork.craigslist.org/";
+	//URL of additional website being scraped: preloved
 	private static final String NEW_URL = "https://www.preloved.co.uk";
-	private WebClient client;
+	private static WebClient client;
 
 	/**
 	 * Default Constructor 
@@ -93,48 +94,24 @@ public class WebScraper {
 
 		
 		try {
-			String searchUrl = DEFAULT_URL + "/search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
-			HtmlPage page = client.getPage(searchUrl);
-
-			List<?> items = (List<?>) page.getByXPath("//li[@class='result-row']");
-
-			// Determining last page pN
-			HtmlElement it = (HtmlElement) items.get(1);
-			HtmlElement pageNum = ((HtmlElement) it.getFirstByXPath("//span[@class='totalcount']"));
-			String pageNum1 = pageNum.asText();
-			
-			int pageNum2 = Integer.parseInt(pageNum1);
-			int pN;
-			if(pageNum2<120)
-			{
-				pN = 1;
-			}
-			else if(pageNum2%120!=0)
-			{
-				pN = (pageNum2/120) +1;
-			}
-			else
-			{
-				pN = pageNum2/120;
-			}			
-
 			Vector<Item> result = new Vector<Item>();
-
-			for(int i=0;i<pN;i++)
+			int pN = 1;
+			String searchUrl = "";
+			String searchUrl2 = "/search/sss?sort=rel&query=" + URLEncoder.encode(keyword, "UTF-8");
+			while(searchUrl2.startsWith("/"))
 			{
-				System.out.println("Number of Craiglist page scraped so far is "+(i+1)+"/"+pN);
-				String extra = "";
-				if(i==0)
-				{
-					extra = "";
-				}
-				else
-				{
-					extra = "s=" + Integer.toString(i*120)+"&";
-				}
-				String searchUrlM = DEFAULT_URL + "search/sss?"+extra+"sort=rel&query="+ URLEncoder.encode(keyword, "UTF-8");
-				HtmlPage pageM = client.getPage(searchUrlM);
+				searchUrl = DEFAULT_URL + searchUrl2;
+				HtmlPage pageM = client.getPage(searchUrl);
 				List<?> itemsM = (List<?>) pageM.getByXPath("//li[@class='result-row']");
+				if(itemsM.size()==0)
+				{
+					System.out.println("no item found on page");
+					break;
+				}
+				System.out.println("Number of Craiglist page scraped so far is "+(pN));
+				System.out.println(itemsM.size());
+				HtmlElement pItem = ((HtmlElement) itemsM.get(1));
+				HtmlAnchor itemAnchorP = ((HtmlAnchor) pItem.getFirstByXPath("//span[@class='buttons']/a[3]"));
 				
 				for (int j = 0; j < itemsM.size();j++) {
 					HtmlElement htmlItem = (HtmlElement) itemsM.get(j);
@@ -145,7 +122,7 @@ public class WebScraper {
 					// It is possible that an item doesn't have any price, we set the price to 0.0
 					// in this case
 					String itemPrice = spanPrice == null ? "0.0" : spanPrice.asText();
-					String postDate = spanDate.getAttribute("datetime");
+					String postDate = spanDate.getAttribute("datetime");		//to set the date
 
 					Item item = new Item();
 					item.setTitle(itemAnchor.asText());
@@ -158,11 +135,10 @@ public class WebScraper {
 					item.setDate(postDate);
 					result.add(item);
 				}
-
+				searchUrl2 = itemAnchorP.getHrefAttribute();
+				pN++;
 			}
 			result.sort(Comparator.comparing(Item::getPrice));
-			System.out.println(result.size());
-			//client.close();
 			return result;
 			
 		} catch (Exception e) {
@@ -182,10 +158,8 @@ public class WebScraper {
 		try {
 			String searchUrl2 = NEW_URL + "/search?keyword=" + URLEncoder.encode(keyword, "UTF-8");
 			HtmlPage page2 = client.getPage(searchUrl2);
-			
 			List<?> items2 = (List<?>) page2.getByXPath("//li[@class='search-result']");
 			Vector<Item> result2 = new Vector<Item>();
-
 			for (int i = 0; i < items2.size(); i++) {
 				
 				HtmlElement htmlItem = (HtmlElement) items2.get(i);
@@ -200,17 +174,25 @@ public class WebScraper {
 				item.setTitle(itemName.asText());
 				item.setDate("0001-01-01 00:00");
 				item.setUrl(itemAnchor.getHrefAttribute());
+				if(itemPrice.contains("£"))
+				{
+					Double x = new Double(itemPrice.replace("£", "").replace(",", ""));
+					x = x * 10.17;		// convert £ to HK $
+					item.setPrice(x);
 
-				Double x = new Double(itemPrice.replace("£", "").replace(",", ""));
-				x = x * 10.17;		// convert £ to HK $
-				item.setPrice(x);
+				}
+				if(itemPrice.contains("€"))
+				{
+					Double x = new Double(itemPrice.replace("€", "").replace(",", ""));
+					x = x * 8.93;		// convert € to HK $
+					item.setPrice(x);
+				}
 				item.setPortal("Preloved");
 				
 				result2.add(item);
 			}
+			System.out.println(result2.size());
 			result2.sort(Comparator.comparing(Item::getPrice));
-			//client.close();
-
 			return result2;
 			
 		} catch (Exception e) {
@@ -238,7 +220,7 @@ public class WebScraper {
 	 * @param l2 List of Item
 	 * @return List of Item
 	 */
-	public List<Item> merge(List<Item> l1, List<Item> l2) {
+	public static List<Item> merge(List<Item> l1, List<Item> l2) {
 	    for (int index1 = 0, index2 = 0; index2 < l2.size(); index1++) {
 	        if (index1 == l1.size() || l1.get(index1).getPrice() > l2.get(index2).getPrice()) {
 	            l1.add(index1, l2.get(index2++));
